@@ -1,16 +1,15 @@
 package com.opentool.dashboard.controller;
 
-import com.opentool.dashboard.common.constant.DataConstants;
 import com.opentool.dashboard.common.domain.R;
 import com.opentool.dashboard.domain.entity.LoginLog;
 import com.opentool.dashboard.domain.vo.OperationData;
-import com.opentool.dashboard.service.ILoginLogService;
-import com.opentool.dashboard.service.IUserService;
+import com.opentool.dashboard.service.IDataAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -24,25 +23,39 @@ import java.util.List;
 @RefreshScope
 public class DataAnalysisController {
     @Autowired
-    private ILoginLogService loginLogService;
-
-    @Autowired
-    private IUserService userService;
+    private IDataAnalysisService dataAnalysisService;
 
     /**
-     * 获取经营相关数据
+     * 网站运营相关数据
      */
-    @GetMapping("/data")
+    @GetMapping("/operation")
     @CrossOrigin()
     public R<?> getOperationData(){
         OperationData operationData = new OperationData();
 
-        operationData.setAccessNum((long) loginLogService.getLoginLogList().size());
-        operationData.setUserNum((long) userService.getUserList().size());
-        operationData.setCollectNum(DataConstants.COLLECT_NUM);
-        operationData.setContributionNum(DataConstants.CONTRIBUTION_NUM);
+        operationData.setAccessNum((long) dataAnalysisService.getLoginLogList().size());
+        operationData.setUserNum((long) dataAnalysisService.getUserList().size());
+        operationData.setCollectNum((long) dataAnalysisService.getCollectLogList().size());
+        operationData.setContributionNum((long) dataAnalysisService.getContributeLogList().size());
 
         return R.ok(operationData);
+    }
+
+    /**
+     * 根据日期范围获取用户访问数据
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @return userData、accessData、contributeData、collectData: Map<String, List<Long>>
+     */
+    @GetMapping("/date/{startDate}/{endDate}")
+    @CrossOrigin
+    public R<?> getAccessDateByDateRange(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate){
+        // 获得endDate后一天
+        LocalDate endLocalDate = LocalDate.parse(endDate);
+        LocalDate nextDay = endLocalDate.plusDays(1);
+        String nextDayStr = nextDay.format(DateTimeFormatter.ISO_DATE);
+
+        return R.ok(dataAnalysisService.getDataByDateRange(startDate, nextDayStr));
     }
 
     /**
@@ -51,7 +64,7 @@ public class DataAnalysisController {
      */
     @PostMapping("/loginlog")
     public R<?> addOperationData(@RequestBody LoginLog loginLog){
-        loginLogService.save(loginLog);
+        dataAnalysisService.insertLoginLog(loginLog);
         return R.ok();
     }
 }
