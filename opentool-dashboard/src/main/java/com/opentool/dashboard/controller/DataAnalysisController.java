@@ -18,9 +18,9 @@ import java.time.format.DateTimeFormatter;
  * @author ZenSheep
  * @date 2023/07/09
  */
-@RestController
-@RequestMapping("/data-analysis")
 @RefreshScope
+@RestController
+@RequestMapping("/dashboard/data-analysis")
 public class DataAnalysisController {
     @Autowired
     private IDataAnalysisService dataAnalysisService;
@@ -29,7 +29,6 @@ public class DataAnalysisController {
      * 网站运营相关数据
      */
     @GetMapping("/operation")
-    @CrossOrigin()
     public R<?> getOperationData(){
         OperationData operationData = new OperationData();
 
@@ -48,7 +47,6 @@ public class DataAnalysisController {
      * @return userData、accessData、contributeData、collectData: Map<String, List<Long>>
      */
     @GetMapping("/date/{startDate}/{endDate}")
-    @CrossOrigin
     public R<?> getAccessDateByDateRange(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate){
         // 获得endDate后一天
         LocalDate endLocalDate = LocalDate.parse(endDate);

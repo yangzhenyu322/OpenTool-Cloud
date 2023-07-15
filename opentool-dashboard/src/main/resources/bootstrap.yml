@@ -7,7 +7,7 @@ spring:
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   application:
-    name: dashboard
+    name: opentool-dashboard
     profiles:
       active: dev
     cloud:

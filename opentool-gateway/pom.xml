@@ -9,10 +9,10 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>opentool-dashboard</artifactId>
+    <artifactId>opentool-gateway</artifactId>
 
     <description>
-        opentool-dashboard服务模块
+        opentool-gateway网关模块
     </description>
 
     <dependencies>
@@ -20,6 +20,18 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- SpringCloud Cloud Gateway  -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+
+        <!--  Spring Cloud LoadBalancer  -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
         <!-- SpringCloud Alibaba Nacos Config -->
@@ -35,39 +47,6 @@
             <version>${spring-cloud-bootstap.version}</version>
         </dependency>
 
-        <!-- SpringBoot Web -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!--  JDBC Connector  -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql-connector.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!--  MyBatis Plus  -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
-        </dependency>
-
-        <!--  lombok  -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!--  fastjson2 -->
-        <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

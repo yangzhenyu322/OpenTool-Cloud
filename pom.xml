@@ -24,6 +24,7 @@
         <spring-cloud-bootstap.version>3.0.3</spring-cloud-bootstap.version>
         <mysql-connector.version>8.0.23</mysql-connector.version>
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
+        <fastjson2.verson>2.0.34</fastjson2.verson>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     </properties>
 
@@ -65,6 +66,13 @@
                 <scope>import</scope>
             </dependency>
 
+            <!--  fastjson2 依赖配置 -->
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson2.verson}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -74,6 +82,7 @@
     聚合关系下对父项目使用mvn命令，对其它子项目产生同样的效果-->
     <modules>
         <module>opentool-dashboard</module>
+        <module>opentool-gateway</module>
     </modules>
 
     <build>
