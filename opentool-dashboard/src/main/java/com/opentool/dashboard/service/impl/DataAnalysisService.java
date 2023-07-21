@@ -128,7 +128,7 @@ public class DataAnalysisService implements IDataAnalysisService {
         }
 
         for(Map<String, Object> row: result) {
-//            System.out.println(row);
+            // System.out.println(row);
             countResults.add((Long)row.get("count"));
         }
 

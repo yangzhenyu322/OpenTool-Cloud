@@ -20,7 +20,7 @@ mybatis-plus:
     # 将数据库中含有下划线字段映射成驼峰命名法
     map-underscore-to-camel-case: true
   # 指定类型别名的包路径
-  type-aliases-package: com.opentool.dashboard.pojo
+  type-aliases-package: com.opentool.dashboard.domain.entity
 
 
 
