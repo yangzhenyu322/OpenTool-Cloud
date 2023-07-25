@@ -21,7 +21,6 @@
         <spring-boot.version>2.7.13</spring-boot.version>
         <spring-cloud.version>2021.0.8</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
-        <spring-cloud-bootstap.version>3.0.3</spring-cloud-bootstap.version>
         <mysql-connector.version>8.0.23</mysql-connector.version>
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
         <fastjson2.verson>2.0.34</fastjson2.verson>
@@ -73,16 +72,39 @@
                 <version>${fastjson2.verson}</version>
             </dependency>
 
+            <!-- 核心模块 -->
+            <dependency>
+                <groupId>com.opentool</groupId>
+                <artifactId>opentool-common-core</artifactId>
+                <version>${opentool.version}</version>
+            </dependency>
+
+            <!-- 系统接口 -->
+            <dependency>
+                <groupId>com.opentool</groupId>
+                <artifactId>opentool-api-system</artifactId>
+                <version>${opentool.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <!-- bootstrap 启动器 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+    </dependencies>
 
     <!--  项目打包类型  -->
     <packaging>pom</packaging>
     <!--模块管理，实现pom项目之间的聚合关系，
     聚合关系下对父项目使用mvn命令，对其它子项目产生同样的效果-->
     <modules>
-        <module>opentool-dashboard</module>
+        <module>opentool-api</module>
         <module>opentool-gateway</module>
+        <module>opentool-common</module>
+        <module>opentool-modules</module>
     </modules>
 
     <build>

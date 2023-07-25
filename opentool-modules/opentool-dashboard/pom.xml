@@ -5,39 +5,39 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.opentool</groupId>
-        <artifactId>opentool</artifactId>
+        <artifactId>opentool-modules</artifactId>
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>opentool-gateway</artifactId>
+    <artifactId>opentool-modules-dashboard</artifactId>
 
     <description>
-        opentool-gateway网关模块
+        opentool-dashboard业务模块
     </description>
 
     <dependencies>
-        <!-- SpringCloud Alibaba Nacos  -->
+        <!-- SpringCloud Alibaba Nacos -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-
-        <!-- SpringCloud Cloud Gateway  -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
-        </dependency>
-
-        <!--  Spring Cloud LoadBalancer  -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
 
         <!-- SpringCloud Alibaba Nacos Config -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- 核心模块  -->
+        <dependency>
+            <groupId>com.opentool</groupId>
+            <artifactId>opentool-common-core</artifactId>
+        </dependency>
+
+        <!-- 系统接口 -->
+        <dependency>
+            <groupId>com.opentool</groupId>
+            <artifactId>opentool-api-system</artifactId>
         </dependency>
     </dependencies>
 
