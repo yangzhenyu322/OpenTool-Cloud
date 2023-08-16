@@ -28,11 +28,11 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
-        <!-- 核心模块  -->
-        <dependency>
-            <groupId>com.opentool</groupId>
-            <artifactId>opentool-common-core</artifactId>
-        </dependency>
+<!--        &lt;!&ndash; 核心模块  &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.opentool</groupId>-->
+<!--            <artifactId>opentool-common-core</artifactId>-->
+<!--        </dependency>-->
 
         <!-- 系统接口 -->
         <dependency>
@@ -47,6 +47,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

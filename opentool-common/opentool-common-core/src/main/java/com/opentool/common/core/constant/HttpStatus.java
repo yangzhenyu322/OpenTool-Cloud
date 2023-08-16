@@ -75,6 +75,11 @@ public class HttpStatus
     public static final int CONFLICT = 409;
 
     /**
+     * 文件过大，超出限制大小
+     */
+    public static final int PAYLOAD_TOO_LARGE = 413;
+
+    /**
      * 不支持的数据，媒体类型
      */
     public static final int UNSUPPORTED_TYPE = 415;

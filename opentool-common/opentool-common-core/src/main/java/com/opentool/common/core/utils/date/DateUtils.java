@@ -1,18 +1,21 @@
-package com.opentool.common.core.utils;
+package com.opentool.common.core.utils.date;
+
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
 /**
- * 日期处理工具
+ * 日期处理工具类
  * / @Author: ZenSheep
  * / @Date: 2023/7/20 23:08
  */
 public class DateUtils {
+    // 如2019-03-22
+    public static String YYY_MM_DD = "yyyy-MM-dd";
     // 如2019-03-22 09:11:52
     public static String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     // 如2019-03-22T09:11:52.000+0000
@@ -56,8 +59,22 @@ public class DateUtils {
         return date2;
     }
 
-    // 将日期的斜杠转横杠
-    public static String BarParseSlash(String dateStr) {
+    /**
+     * 将日期的斜杠转横杠
+     * @param dateStr 日期字符串
+     * @return 如2019-03-22转2019/03/22
+     */
+    public static String barConvertSlash(String dateStr) {
         return dateStr.replace('-','/');
+    }
+
+    /**
+     * 日期路径
+     * @param format 日期格式，如yyyy-MM-dd
+     * @return 如2019-03-22
+     */
+    public static String getDatePath(String format) {
+        Date now = new Date();
+        return DateFormatUtils.format(now, format).replace(':', '-');
     }
 }

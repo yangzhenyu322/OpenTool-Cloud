@@ -9,10 +9,9 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>opentool-modules-system</artifactId>
-
+    <artifactId>opentool-general-tool</artifactId>
     <description>
-        opentool-modules-system系统模块
+        opentool-general-tool业务模块
     </description>
 
     <dependencies>
@@ -26,12 +25,6 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-
-        <!-- aliyun-oss -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>aliyun-oss-spring-boot-starter</artifactId>
         </dependency>
 
         <!-- 系统接口 -->
@@ -53,6 +46,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

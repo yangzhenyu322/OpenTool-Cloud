@@ -3,7 +3,7 @@ package com.opentool.system.domain.vo;
 import com.opentool.common.core.enums.UserRole;
 import com.opentool.common.core.enums.UserSex;
 import com.opentool.common.core.enums.UserStatus;
-import com.opentool.common.core.utils.DateUtils;
+import com.opentool.common.core.utils.date.DateUtils;
 import com.opentool.system.api.domain.User;
 import lombok.Data;
 

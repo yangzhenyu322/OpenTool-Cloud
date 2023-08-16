@@ -24,6 +24,8 @@
         <mysql-connector.version>8.0.23</mysql-connector.version>
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
         <fastjson2.verson>2.0.34</fastjson2.verson>
+        <aliyun.oss.version>1.0.0</aliyun.oss.version>
+        <aliyun.sdk.core.version>4.5.7</aliyun.sdk.core.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     </properties>
 
@@ -72,6 +74,25 @@
                 <version>${fastjson2.verson}</version>
             </dependency>
 
+            <!-- aliyun-oss -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>aliyun-oss-spring-boot-starter</artifactId>
+                <version>${aliyun.oss.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.aliyun</groupId>
+                        <artifactId>aliyun-java-sdk-oss</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>${aliyun.sdk.core.version}</version>
+            </dependency>
+
             <!-- 核心模块 -->
             <dependency>
                 <groupId>com.opentool</groupId>
@@ -105,6 +126,7 @@
         <module>opentool-gateway</module>
         <module>opentool-common</module>
         <module>opentool-modules</module>
+        <module>opentool-modules/opentool-general-tool</module>
     </modules>
 
     <build>

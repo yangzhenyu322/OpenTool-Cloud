@@ -21,12 +21,6 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
-        <!-- SpringCloud Openfeign -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-
         <!--  Spring Cloud LoadBalancer  -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -54,10 +48,45 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- SpringCloud Openfeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
         <!-- Alibaba Fastjson -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
         </dependency>
+
+        <!-- Apache Lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
     </dependencies>
+
+    <!-- 解决外部引用jar包问题 -->
+    <build>
+        <resources>
+            <resource>
+                <!-- 自己(非Maven引入)导入jar包的目录 -->
+                <directory>src/main/resources/lib</directory>
+                <!-- Spring-Boot项目打包后存放的目录 -->
+                <targetPath>BOOT-INF/lib/</targetPath>
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+            </resource>
+            <resource>
+                <!-- 是否替换@xx@表示的maven properties属性值 -->
+                <filtering>true</filtering>
+                <!-- 源文件存放目录 -->
+                <directory>src/main/resources</directory>
+                <!-- 打包后存放目录 -->
+                <targetPath>BOOT-INF/classes/</targetPath>
+            </resource>
+        </resources>
+    </build>
 </project>

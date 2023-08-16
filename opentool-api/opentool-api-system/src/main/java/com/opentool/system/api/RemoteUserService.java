@@ -1,9 +1,9 @@
 package com.opentool.system.api;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.opentool.system.api.domain.User;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  * / @Author: ZenSheep
  * / @Date: 2023/7/25 10:26
  */
-@FeignClient(name = "opentool-system")
+@FeignClient(name = "opentool-system", contextId="remote-user")
 public interface RemoteUserService {
     /**
      * 查询用户列表
@@ -29,5 +29,5 @@ public interface RemoteUserService {
      * @return
      */
     @GetMapping("/user/maps/{startDate}/{endDate}")
-    public List<Map<String, Object>> getUserDataByDate(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate);
+    List<Map<String, Object>> getUserDataByDate(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate);
 }
