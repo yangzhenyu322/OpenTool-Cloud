@@ -33,9 +33,10 @@ spring:
             - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: 10MB
+      max-request-size: 10MB
       resolve-lazily: true
+
 
 # Mybatis-Plus
 mybatis-plus:
@@ -49,7 +50,7 @@ mybatis-plus:
 aliyun:
   # 访问OSS的域名
   endpoint: http://oss-cn-shenzhen.aliyuncs.com
-  accessKeyId: LTAI5tGzBmBrLy3R8e1E5ARf
-  accessKeySecret: ep3kt9X8zT1HlX5fjleGbmEH7SD1uE
+#  accessKeyId: xxx
+#  accessKeySecret: xxx
   # 管理所存储Object的存储空间名称
   bucketName: opentool

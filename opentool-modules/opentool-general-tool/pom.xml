@@ -27,6 +27,12 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
+        <!-- Google图片压缩模块 -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+        </dependency>
+
         <!-- 系统接口 -->
         <dependency>
             <groupId>com.opentool</groupId>

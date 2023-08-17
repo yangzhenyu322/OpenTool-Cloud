@@ -10,7 +10,7 @@
 
     <name>opentool</name>
     <!-- 这里可以改成网站上线地址 -->
-    <url>http://maven.apache.org</url>
+    <url>https://maven.apache.org</url>
     <description>开源工具微服务平台</description>
 
     <properties>
@@ -26,6 +26,7 @@
         <fastjson2.verson>2.0.34</fastjson2.verson>
         <aliyun.oss.version>1.0.0</aliyun.oss.version>
         <aliyun.sdk.core.version>4.5.7</aliyun.sdk.core.version>
+        <thumbnailator.version>0.4.8</thumbnailator.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     </properties>
 
@@ -36,15 +37,6 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- SpringCloud-Alibaba 微服务 -->
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -91,6 +83,13 @@
                 <groupId>com.aliyun</groupId>
                 <artifactId>aliyun-java-sdk-core</artifactId>
                 <version>${aliyun.sdk.core.version}</version>
+            </dependency>
+
+            <!-- Google图片压缩模块 -->
+            <dependency>
+                <groupId>net.coobird</groupId>
+                <artifactId>thumbnailator</artifactId>
+                <version>${thumbnailator.version}</version>
             </dependency>
 
             <!-- 核心模块 -->

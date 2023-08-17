@@ -28,6 +28,11 @@ spring:
           # 共享配置
           shared-configs:
             - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      resolve-lazily: true
 
 # Mybatis-Plus
 mybatis-plus:
