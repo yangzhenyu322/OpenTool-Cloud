@@ -41,7 +41,7 @@ public class OSSService implements IOSSService {
         try {
             // UUID生成文件名，防止重复
             String fileName = "";
-            String baseName = OSSFileUtils.getBaseName(OSSFileUtils.getBaseName(file.getOriginalFilename()));
+            String baseName = OSSFileUtils.getBaseName(file.getOriginalFilename());
             InputStream inputStream = file.getInputStream();
             // 创建ObjectMetadata，设置用户自定义的元数据以及HTTP头，比如内容长度，ETag等
             ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -57,6 +57,10 @@ public class OSSService implements IOSSService {
             Date expiration = new Date(new Date().getTime() + 3600 * 1000);
             // 生成以GET方法访问的签名URL，访客可以直接通过浏览器访问相关内容。
             url = ossClient.generatePresignedUrl(ossConfiguration.getBucketName(), fileName, expiration).toString();
+//            url = ossClient.generatePresignedUrl(ossConfiguration.getBucketName(), fileName, null).toString();
+            // 处理返回的url格式
+            url = url.substring(0, url.lastIndexOf("?"));
+            url = url.replaceAll("http","https");
         } catch (IOException e) {
             e.printStackTrace();
         }

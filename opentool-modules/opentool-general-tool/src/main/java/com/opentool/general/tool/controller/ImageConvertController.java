@@ -7,6 +7,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
  * 图像转换控制类
  * / @Author: ZenSheep
@@ -17,9 +20,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/imageConvert")
 public class ImageConvertController {
     @Autowired
-    IImageConvertService iImageConvertService;
+    IImageConvertService imageConvertService;
     @PostMapping("/upload")
     public R<?> uploadFile(@RequestPart("file") MultipartFile file) {
-        return R.ok(iImageConvertService.uploadFile(file, "ImageConvert/images"));
+        return R.ok(imageConvertService.uploadFile(file, "ImageConvert/images/origin"));
+    }
+
+    @PostMapping("/conversion")
+    public R<?> convertFormat(@RequestParam("urlsStrList") List<String> urlsStrList, @RequestParam("targetFormat") String targetFormat) throws IOException {
+        System.out.println("urlsStrList:" + urlsStrList);
+        System.out.println("targetFormat:" + targetFormat);
+        return R.ok(imageConvertService.urlsFormatConvert(urlsStrList, targetFormat, "ImageConvert/images/convert"));
     }
 }

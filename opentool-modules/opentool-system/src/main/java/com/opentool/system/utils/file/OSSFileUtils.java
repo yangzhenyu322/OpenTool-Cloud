@@ -25,17 +25,27 @@ public class OSSFileUtils {
     public static String getcontentType(String fileName) {
         fileName = fileName.substring(fileName.lastIndexOf("."));
 
-        if (fileName.equalsIgnoreCase(".bmp")) {
-            return "image/bmp";
-        }
-        if (fileName.equalsIgnoreCase(".gif")) {
-            return "image/gif";
-        }
         if (fileName.equalsIgnoreCase(".jpeg") ||
                 fileName.equalsIgnoreCase(".jpg") ||
                 fileName.equalsIgnoreCase(".png")) {
             return "image/jpg";
         }
+        if (fileName.equalsIgnoreCase(".gif")) {
+            return "image/gif";
+        }
+        if (fileName.equalsIgnoreCase(".tif")) {
+            return "image/tif";
+        }
+        if (fileName.equalsIgnoreCase(".tiff")) {
+            return "image/tiff";
+        }
+        if (fileName.equalsIgnoreCase(".bmp")) {
+            return "image/bmp";
+        }
+        if (fileName.equalsIgnoreCase(".wbmp")) {
+            return "wbmp/gif";
+        }
+
         if (fileName.equalsIgnoreCase(".html")) {
             return "text/html";
         }
