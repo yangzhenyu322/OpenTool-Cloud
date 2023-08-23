@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.UUID;
 
@@ -48,8 +49,10 @@ public class OSSService implements IOSSService {
             objectMetadata.setContentLength(inputStream.available());
             objectMetadata.setCacheControl("no-cache");
             objectMetadata.setHeader("Pragma", "no-cache");
+//            objectMetadata.setContentEncoding("utf-8");
             objectMetadata.setContentType(OSSFileUtils.getcontentType(file.getOriginalFilename()));
-            objectMetadata.setContentDisposition("inline;filename=" + baseName);
+            // 设置名称，如果有中文字符，需要进行URL编码
+            objectMetadata.setContentDisposition("inline;filename=" + URLEncoder.encode(baseName, "UTF-8"));
             fileName = storagePath + "/" + UUID.randomUUID().toString() + "/"  + file.getOriginalFilename();
             // 上传文件：调用ossClient的putObject方法完成文件上传，并返回文件名
             ossClient.putObject(ossConfiguration.getBucketName(), fileName, inputStream, objectMetadata);

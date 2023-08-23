@@ -25,10 +25,14 @@ public class OSSFileUtils {
     public static String getcontentType(String fileName) {
         fileName = fileName.substring(fileName.lastIndexOf("."));
 
-        if (fileName.equalsIgnoreCase(".jpeg") ||
-                fileName.equalsIgnoreCase(".jpg") ||
-                fileName.equalsIgnoreCase(".png")) {
-            return "image/jpg";
+        if (fileName.equalsIgnoreCase(".jpg")) {
+            return "image/jpeg";
+        }
+        if (fileName.equalsIgnoreCase(".jpeg")) {
+            return "image/jpeg";  // 支持预览（其它格式在OSS不支持预览）
+        }
+        if (fileName.equalsIgnoreCase(".png")) {
+            return "image/png";
         }
         if (fileName.equalsIgnoreCase(".gif")) {
             return "image/gif";

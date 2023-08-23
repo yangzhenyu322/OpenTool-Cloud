@@ -26,7 +26,7 @@
         <fastjson2.verson>2.0.34</fastjson2.verson>
         <aliyun.oss.version>1.0.0</aliyun.oss.version>
         <aliyun.sdk.core.version>4.5.7</aliyun.sdk.core.version>
-        <thumbnailator.version>0.4.8</thumbnailator.version>
+        <thumbnailator.version>0.4.19</thumbnailator.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     </properties>
 

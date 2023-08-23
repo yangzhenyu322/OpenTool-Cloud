@@ -28,8 +28,6 @@ public class ImageConvertController {
 
     @PostMapping("/conversion")
     public R<?> convertFormat(@RequestParam("urlsStrList") List<String> urlsStrList, @RequestParam("targetFormat") String targetFormat) throws IOException {
-        System.out.println("urlsStrList:" + urlsStrList);
-        System.out.println("targetFormat:" + targetFormat);
         return R.ok(imageConvertService.urlsFormatConvert(urlsStrList, targetFormat, "ImageConvert/images/convert"));
     }
 }

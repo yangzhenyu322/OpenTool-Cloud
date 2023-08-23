@@ -65,6 +65,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+
+        <!-- File 转 MultipartFile 依赖-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- 解决外部引用jar包问题 -->

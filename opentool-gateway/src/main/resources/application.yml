@@ -19,7 +19,7 @@ spring:
         - id: opentool-general-tool #
           uri: lb://opentool-general-tool
           predicates:
-            - Path=/imageConvert/**,
+            - Path=/imageConvert/**,/imageEdit/**
       globalcors: # 全局的跨域请求
         add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
         cors-configurations:
