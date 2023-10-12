@@ -1,6 +1,7 @@
 package com.opentool.general.tool.utils.file;
 
 import com.opentool.common.core.utils.file.FileTypeUtils;
+import com.opentool.general.tool.domain.vo.ConvertConfigInfo;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FilenameUtils;
 
@@ -29,28 +30,89 @@ public class ImageConvertUtils {
      * @return
      * @throws IOException
      */
-    public static List<File> urlsFormatConvert(List<String> urlStrList, String targetFormat) throws IOException {
+    public static List<File> urlsFormatConvert(List<String> urlStrList, String targetFormat, ConvertConfigInfo convertConfigInfo) throws IOException {
         List<File> fileList = new ArrayList<>();
         List<URL> urlList = new ArrayList<>();
         for (String urlStr :urlStrList) {
             String imgName = urlStr.substring(urlStr.lastIndexOf("/") + 1); // 如 girl.jpg
             String baseName = FilenameUtils.getBaseName(imgName);
-
             urlList.add(new URL(urlStr));
-            // 图片缓存地址
+            // 图片本地缓存地址
             fileList.add(new File("F:\\图片\\opentool\\output\\convert\\" + baseName + "." + targetFormat.toLowerCase()));
         }
 
         if (Arrays.asList(IMG_SUPPORT_TYPE).contains(targetFormat)) { // 支持目标格式
-            Thumbnails.fromURLs(urlList)
-                    .scale(1D)
-                    .allowOverwrite(true)
-                    .outputFormat(targetFormat)
-                    .toFiles(fileList);
+            // 转换为指定目标格式和尺寸格式
+            switch (convertConfigInfo.getSizeType()) {
+                case "NoChange": {
+                    Thumbnails.fromURLs(urlList)
+                            .scale(1D)
+                            .allowOverwrite(true)
+                            .outputFormat(targetFormat)
+                            .toFiles(fileList);
+                    break;
+                }
+                case "Size": {
+                    Thumbnails.fromURLs(urlList)
+                            .forceSize(convertConfigInfo.getWidth(), convertConfigInfo.getHeight()) // 不保证宽高比改变大小
+                            .allowOverwrite(true)
+                            .outputFormat(targetFormat)
+                            .toFiles(fileList);
+                    break;
+                }
+                case "Width": {
+                    Thumbnails.fromURLs(urlList)
+                            .width(convertConfigInfo.getWidth()) // 改变宽度
+                            .keepAspectRatio(false) // 不保证宽高比
+                            .allowOverwrite(true)
+                            .outputFormat(targetFormat)
+                            .toFiles(fileList);
+                    break;
+                }
+                case "WidthKeepRatio": {
+                    Thumbnails.fromURLs(urlList)
+                            .width(convertConfigInfo.getWidth()) // 改变宽度同时保证宽高比
+                            .allowOverwrite(true)
+                            .outputFormat(targetFormat)
+                            .toFiles(fileList);
+                    break;
+                }
+                case "Height": {
+                    Thumbnails.fromURLs(urlList)
+                            .height(convertConfigInfo.getHeight()) // 改变高度
+                            .keepAspectRatio(false) // 不保证宽高比
+                            .allowOverwrite(true)
+                            .outputFormat(targetFormat)
+                            .toFiles(fileList);
+                    break;
+                }
+                case "HeightKeepRatio": {
+                    Thumbnails.fromURLs(urlList)
+                            .height(convertConfigInfo.getHeight()) // 改变高度同时保证宽高比
+                            .allowOverwrite(true)
+                            .outputFormat(targetFormat)
+                            .toFiles(fileList);
+                    break;
+                }
+                case "Scale": {
+                    Thumbnails.fromURLs(urlList)
+                            .scale(convertConfigInfo.getScale()) // 按比例缩放图像
+                            .allowOverwrite(true)
+                            .outputFormat(targetFormat)
+                            .toFiles(fileList);
+                    break;
+                }
+                default: {
+                    System.out.println("未改变图像格式");
+                    break;
+                }
+            }
         }
 
         return fileList;
     }
+
+
 
     /**
      * 图像略缩图
@@ -76,11 +138,11 @@ public class ImageConvertUtils {
 //        File file = new File(new URL("https://opentool.oss-cn-shenzhen.aliyuncs.com/ImageConvert/images/74fbb686-a717-4074-95f9-d591750d5b3d/树屋.png").toURI());
 
 //         本地图片
-//        Thumbnails.of("F:\\图片\\idea\\girl01.jpg")  // 支持本地图片、网络图片、File的来源
-//                .scale(1D)  // 缩放大小：Double
-//                .allowOverwrite(true)  // 允许覆盖已存在文件
-//                .toFile("F:\\JavaProject\\file-save-path\\admin\\upload\\girl01.jpg");  // 保存至目标路径
-
+        Thumbnails.of("F:\\图片\\idea\\girl01.jpg")  // 支持本地图片、网络图片、File的来源
+                .scale(0.5D)  // 缩放大小：Double
+                .allowOverwrite(true)  // 允许覆盖已存在文件
+                .toFile("F:\\JavaProject\\file-save-path\\admin\\upload\\girl01-test.jpg");  // 保存至目标路径
+//
 //        // 网络图片
 //        File urlOutPutFile = new File("F:\\JavaProject\\file-save-path\\admin\\upload\\girl03.jpg");
 //        Thumbnails.of(new URL("https://opentool.oss-cn-shenzhen.aliyuncs.com/ImageConvert/images/16944503-339f-4c03-a48c-05f502fc7155/girl03.jpg"))
@@ -137,6 +199,6 @@ public class ImageConvertUtils {
 //        List<File> fileList = urlsFormatConvert(urlStrList, targetFormat);
 
         // 图像略缩图
-        File file = imgConvertThumbnail(new File("F:\\图片\\idea\\girl01.jpg"));
+        // File file = imgConvertThumbnail(new File("F:\\图片\\idea\\girl01.jpg"));
     }
 }

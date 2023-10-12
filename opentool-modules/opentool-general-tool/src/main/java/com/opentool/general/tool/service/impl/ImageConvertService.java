@@ -1,6 +1,7 @@
 package com.opentool.general.tool.service.impl;
 
 import com.opentool.common.core.utils.file.MultipartFileUtils;
+import com.opentool.general.tool.domain.vo.ConvertConfigInfo;
 import com.opentool.general.tool.service.IImageConvertService;
 import com.opentool.general.tool.utils.file.ImageConvertUtils;
 import com.opentool.system.api.RemoteFileService;
@@ -29,9 +30,9 @@ public class ImageConvertService implements IImageConvertService {
     }
 
     @Override
-    public List<String> urlsFormatConvert(List<String> urlsStrList, String targetFormat, String storagePath) throws IOException {
+    public List<String> urlsFormatConvert(List<String> urlsStrList, String targetFormat, ConvertConfigInfo convertConfigInfo, String storagePath) throws IOException {
         List<String> urlsTargetPath = new ArrayList<>();
-        List<File> fileList = ImageConvertUtils.urlsFormatConvert(urlsStrList, targetFormat);
+        List<File> fileList = ImageConvertUtils.urlsFormatConvert(urlsStrList, targetFormat, convertConfigInfo);
 
         for (File file:fileList) {
             MultipartFile multipartFile = MultipartFileUtils.fileToMultipartFile(file);

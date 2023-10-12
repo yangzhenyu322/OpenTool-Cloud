@@ -1,6 +1,8 @@
 package com.opentool.general.tool.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.opentool.common.core.domain.R;
+import com.opentool.general.tool.domain.vo.ConvertConfigInfo;
 import com.opentool.general.tool.service.IImageConvertService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,7 +29,12 @@ public class ImageConvertController {
     }
 
     @PostMapping("/conversion")
-    public R<?> convertFormat(@RequestParam("urlsStrList") List<String> urlsStrList, @RequestParam("targetFormat") String targetFormat) throws IOException {
-        return R.ok(imageConvertService.urlsFormatConvert(urlsStrList, targetFormat, "ImageConvert/images/convert"));
+    public R<?> convertFormat(
+            @RequestParam("urlsStrList") List<String> urlsStrList,
+            @RequestParam("targetFormat") String targetFormat,
+            @RequestParam("convertConfig") String convertConfig) throws IOException {
+        // 将JSON对象反序列为ConvertConfigInfo对象
+        ConvertConfigInfo convertConfigInfo = JSON.parseObject(convertConfig, ConvertConfigInfo.class);
+        return R.ok(imageConvertService.urlsFormatConvert(urlsStrList, targetFormat, convertConfigInfo,"ImageConvert/images/convert"));
     }
 }

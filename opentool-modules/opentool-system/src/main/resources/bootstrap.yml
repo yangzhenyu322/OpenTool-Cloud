@@ -1,6 +1,6 @@
 # Tomcat
 server:
-  port: 8080
+  port: 8083
 
 file-server:
   root-path: F:\JavaProject\file-save-path\
