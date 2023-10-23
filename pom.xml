@@ -27,6 +27,7 @@
         <aliyun.oss.version>1.0.0</aliyun.oss.version>
         <aliyun.sdk.core.version>4.5.7</aliyun.sdk.core.version>
         <thumbnailator.version>0.4.19</thumbnailator.version>
+        <chatgpt.java.version>1.0.15</chatgpt.java.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     </properties>
 
@@ -91,6 +92,19 @@
                 <artifactId>thumbnailator</artifactId>
                 <version>${thumbnailator.version}</version>
             </dependency>
+
+            <!-- chatgpt-java依赖 -->
+            <dependency>
+                <groupId>com.unfbx</groupId>
+                <artifactId>chatgpt-java</artifactId>
+                <version>${chatgpt.java.version}</version>
+            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>com.github.plexpt</groupId>-->
+<!--                <artifactId>chatgpt</artifactId>-->
+<!--                <version>4.1.2</version>-->
+<!--            </dependency>-->
 
             <!-- 核心模块 -->
             <dependency>

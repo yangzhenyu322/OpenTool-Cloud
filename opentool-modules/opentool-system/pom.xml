@@ -34,6 +34,20 @@
             <artifactId>aliyun-oss-spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- chatgpt-java -->
+        <dependency>
+            <groupId>com.unfbx</groupId>
+            <artifactId>chatgpt-java</artifactId>
+        </dependency>
+
+        <!-- junit-test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- 系统接口 -->
         <dependency>
             <groupId>com.opentool</groupId>

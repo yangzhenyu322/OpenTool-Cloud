@@ -21,7 +21,7 @@ spring:
     cloud:
       nacos:
         discovery:
-          # 服务注册地址
+          # 服务注册
           server-addr: localhost:8848
         config:
           # 配置中心地址
@@ -56,3 +56,15 @@ aliyun:
 #  accessKeySecret: xxx
   # 管理所存储Object的存储空间名称
   bucketName: opentool
+
+# ChatGpt
+chatgpt:
+  apiHost: https://api.qqslyx.com/
+  apiKey: sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266
+  proxy:
+    httpHost: 127.0.0.1
+    port: 7890
+  timeout:
+    connect: 30
+    read: 30
+    write: 30

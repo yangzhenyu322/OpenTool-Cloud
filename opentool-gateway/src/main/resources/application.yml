@@ -11,7 +11,7 @@ spring:
         - id: opentool-system # 路由id
           uri: lb://opentool-system # 路由的目标地址 lb就是负载均衡，后面跟服务名称
           predicates:
-            - Path=/user/**, /file/**, /oss/** # 这个是按照路径匹配，只要以/dashboard/开头就符合要求
+            - Path=/user/**, /file/**, /oss/**, /chat/** # 按照路径匹配
         - id: opentool-dashboard #
           uri: lb://opentool-dashboard
           predicates:
@@ -35,3 +35,7 @@ spring:
             allowedHeaders: "*" # 允许在请求中携带头信息
             allowCredentials: true # 是否允许携带cookie信息
             maxAge: 360000 # 这次跨域检测的有效期
+      httpclient:
+        pool:
+          # 在连接池中的空闲连接的最大空闲时间,默认60000ms，http.timeout默认为30000ms（要保证max-idle-time不大于connection-timeout）
+          max-idle-time: 20000ms

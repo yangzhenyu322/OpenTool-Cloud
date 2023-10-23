@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 /**
  * OSS-Client配置类
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
  * / @Date: 2023/8/10 15:48
  */
 @Configuration
-@Component
 public class OSSConfiguration {
 
     private volatile static OSS ossClient;
