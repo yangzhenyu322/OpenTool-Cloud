@@ -1,7 +1,9 @@
 package com.opentool.system.config;
 
+import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.OpenAiStreamClient;
 import com.unfbx.chatgpt.function.KeyRandomStrategy;
+import com.unfbx.chatgpt.interceptor.DynamicKeyOpenAiAuthInterceptor;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -60,16 +62,16 @@ public class ChatConfiguration {
      * 阻塞式传输
      * @return
      */
-//    @Bean
-//    public OpenAiClient openAiClient() {
-//        return OpenAiClient.builder()
-//                .apiKey(Arrays.asList(apiKey))
-//                .keyStrategy(new KeyRandomStrategy())
-//                .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
-//                .okHttpClient(okHttpClient())
-//                .apiHost(apiHost)
-//                .build();
-//    }
+    @Bean
+    public OpenAiClient openAiClient() {
+        return OpenAiClient.builder()
+                .apiKey(Arrays.asList(apiKey))
+                .keyStrategy(new KeyRandomStrategy())
+                .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
+                .okHttpClient(okHttpClient())
+                .apiHost(apiHost)
+                .build();
+    }
 
     /**
      * 流式传输
@@ -83,6 +85,7 @@ public class ChatConfiguration {
                 .apiKey(Arrays.asList(apiKey))
                 // 自定义Key的获取策略：默认KeyRandomStrategy
                 .keyStrategy(new KeyRandomStrategy())
+                .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
                 .okHttpClient(okHttpClient)
                 // 自己做了dialing就传代理地址，没有可不传
                 .apiHost(apiHost)

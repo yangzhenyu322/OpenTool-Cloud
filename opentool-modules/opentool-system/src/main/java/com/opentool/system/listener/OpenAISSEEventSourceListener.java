@@ -1,7 +1,10 @@
 package com.opentool.system.listener;
 
+import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opentool.system.cache.MessageLocalCache;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
+import com.unfbx.chatgpt.entity.chat.Message;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
@@ -11,6 +14,7 @@ import okhttp3.sse.EventSourceListener;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -20,12 +24,17 @@ import java.util.Objects;
  */
 @Slf4j
 public class OpenAISSEEventSourceListener extends EventSourceListener {
-    private long tokens;
+    private long tokens; // tokens数
+    private SseEmitter sseEmitter; // sse连接
+    private String uid; // 用户id
+    private String answer; // 回答文本
+    private List<Message> messages; // 历史消息
 
-    private SseEmitter sseEmitter;
 
-    public OpenAISSEEventSourceListener(SseEmitter sseEmitter) {
+    public OpenAISSEEventSourceListener(SseEmitter sseEmitter, String uid, List<Message> messages) {
         this.sseEmitter = sseEmitter;
+        this.uid = uid;
+        this.messages = messages;
     }
 
     @SneakyThrows
@@ -35,6 +44,10 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
         tokens += 1;
         if (data.equals("[DONE]")) {
             log.info("OpenAI返回数据结束了");
+            // 缓存历史数据
+            Message currentMessage = Message.builder().content(answer).role(Message.Role.ASSISTANT).build();
+            messages.add(currentMessage);
+            MessageLocalCache.CACHE.put("msg" + uid, JSONUtil.toJsonStr(messages), MessageLocalCache.TIMEOUT);
 
             Map<String, String> map = new HashMap<>();
             map.put("tokens", String.valueOf(tokens()));
@@ -60,6 +73,8 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
                     .id(completionResponse.getId())
                     .data(completionResponse.getChoices().get(0).getDelta())
                     .reconnectTime(3000));
+
+            answer += completionResponse.getChoices().get(0).getDelta().getContent();
         } catch (Exception e) {
             log.error("sse信息推送失败！");
             eventSource.cancel();

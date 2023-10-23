@@ -65,6 +65,6 @@ chatgpt:
     httpHost: 127.0.0.1
     port: 7890
   timeout:
-    connect: 30
-    read: 30
-    write: 30
+    connect: 45
+    read: 45
+    write: 45

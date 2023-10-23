@@ -1,4 +1,4 @@
-package com.opentool.system.config;
+package com.opentool.system.cache;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
@@ -11,9 +11,9 @@ import cn.hutool.core.date.DateUnit;
  */
 public class LocalCache {
      // 缓存时长
-    public static final long TIMEOUT = 5 * DateUnit.MINUTE.getMillis();
+    public static final long TIMEOUT = 10 * DateUnit.MINUTE.getMillis();
      // 清除问题
-    private static final long CLEAN_TIMEOUT = 5 * DateUnit.MINUTE.getMillis();
+    private static final long CLEAN_TIMEOUT = 10 * DateUnit.MINUTE.getMillis();
     // 缓存对象
     public  static final TimedCache<String, Object> CACHE = CacheUtil.newTimedCache(TIMEOUT);
 
