@@ -12,6 +12,8 @@
     <modules>
         <module>opentool-system</module>
         <module>opentool-dashboard</module>
+        <module>opentool-general-tool</module>
+        <module>opentool-ai-tool</module>
     </modules>
 
     <artifactId>opentool-modules</artifactId>

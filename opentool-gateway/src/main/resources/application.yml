@@ -11,15 +11,19 @@ spring:
         - id: opentool-system # 路由id
           uri: lb://opentool-system # 路由的目标地址 lb就是负载均衡，后面跟服务名称
           predicates:
-            - Path=/user/**, /file/**, /oss/**, /chat/** # 按照路径匹配
-        - id: opentool-dashboard #
+            - Path=/user/**, /file/**, /oss/** # 按照路径匹配
+        - id: opentool-dashboard
           uri: lb://opentool-dashboard
           predicates:
             - Path=/data-analysis/**,/workbench/**
-        - id: opentool-general-tool #
+        - id: opentool-general-tool
           uri: lb://opentool-general-tool
           predicates:
             - Path=/imageConvert/**,/imageEdit/**
+        - id: opentool-ai-tool
+          uri: lb://opentool-ai-tool
+          predicates:
+            - Path=/chatgpt/**
       globalcors: # 全局的跨域请求
         add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
         cors-configurations:

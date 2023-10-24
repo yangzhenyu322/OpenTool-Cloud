@@ -9,7 +9,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>opentool-general-tool</artifactId>
+    <artifactId>opentool-modules-general-tool</artifactId>
     <description>
         opentool-general-tool业务模块
     </description>
@@ -43,16 +43,6 @@
         <dependency>
             <groupId>com.opentool</groupId>
             <artifactId>opentool-api-system</artifactId>
-        </dependency>
-
-        <!-- 核心模块  -->
-        <dependency>
-            <groupId>com.opentool</groupId>
-            <artifactId>opentool-common-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp-sse</artifactId>
         </dependency>
     </dependencies>
 

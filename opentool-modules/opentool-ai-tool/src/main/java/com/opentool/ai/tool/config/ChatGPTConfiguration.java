@@ -1,4 +1,4 @@
-package com.opentool.system.config;
+package com.opentool.ai.tool.config;
 
 import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.OpenAiStreamClient;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * / @Date: 2023/10/18 19:53
  */
 @Configuration
-public class ChatConfiguration {
+public class ChatGPTConfiguration {
     // 代理方式二选一
     // 1.自定义代理服务
     @Value("${chatgpt.proxy.httpHost}")

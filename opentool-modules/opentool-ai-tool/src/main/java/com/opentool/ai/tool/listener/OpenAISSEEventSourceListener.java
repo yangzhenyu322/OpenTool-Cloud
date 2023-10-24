@@ -1,8 +1,8 @@
-package com.opentool.system.listener;
+package com.opentool.ai.tool.listener;
 
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opentool.system.cache.MessageLocalCache;
+import com.opentool.ai.tool.cache.MessageLocalCache;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
 import lombok.SneakyThrows;

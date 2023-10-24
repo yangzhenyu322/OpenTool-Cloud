@@ -1,9 +1,7 @@
-package com.opentool.system.controller;
+package com.opentool.ai.tool.controller;
 
-import com.opentool.common.core.domain.R;
-import com.opentool.system.domain.vo.request.ChatRequest;
-import com.opentool.system.domain.vo.response.ChatResponse;
-import com.opentool.system.service.IChatService;
+import com.opentool.ai.tool.domain.chat.ChatRequest;
+import com.opentool.ai.tool.service.IChatGPTService;
 import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.entity.chat.ChatChoice;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
@@ -31,20 +29,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RefreshScope
 @RestController
-@RequestMapping("/chat")
-public class ChatController {
+@RequestMapping("/chatgpt")
+public class ChatGPTController {
     @Autowired
-    private IChatService chatService;
+    private IChatGPTService chatGPTService;
 
     /**
      * 创建sse连接
-     * @param uid：每次提问的uid需要不同，否则可能重复回答
+     * @param uid
      * @return SseEmitter
      */
     @GetMapping("/createSse/{uid}")
     public SseEmitter createSseConnect(@PathVariable("uid") String uid){
         log.info("[{}]开始创建sse连接", uid);
-        return chatService.createSee(uid);
+        return chatGPTService.createSee(uid);
     }
 
     /**
@@ -52,21 +50,20 @@ public class ChatController {
      * @param uid 用户id
      */
     @GetMapping("/closeSse/{uid}")
-    public R<String> closeConnect(@PathVariable("uid") String uid) {
-        chatService.closeSee(uid);
-        return R.ok("关闭sse连接成功:[uid]" + uid);
+    public String closeConnect(@PathVariable("uid") String uid) {
+        chatGPTService.closeSee(uid);
+        return "关闭后端sse连接成功:" + uid;
     }
 
     /**
      * 聊天接口
-     * @param chatRequest
-     * @param uid
-     * @return
+     * @param chatRequest 请求参数
+     * @return tokens 问题的token长度
      */
-    @PostMapping("/msg/{uid}")
-    public ChatResponse sseChat(@RequestBody ChatRequest chatRequest, @PathVariable("uid") String uid) {
-        log.info("[{}]请求提问：[{}]",uid, chatRequest.getMsg());
-        return chatService.sseChat(uid, chatRequest);
+    @PostMapping("/message")
+    public Long sseChat(@RequestBody ChatRequest chatRequest) {
+        log.info("[{}]请求提问：[{}]",chatRequest.getUid(), chatRequest.getQuestion());
+        return chatGPTService.sseChat(chatRequest.getUid(), chatRequest.getQuestion());
     }
 
     public static void main(String[] args) {

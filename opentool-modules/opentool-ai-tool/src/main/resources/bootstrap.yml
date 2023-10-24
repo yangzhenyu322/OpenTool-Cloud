@@ -1,9 +1,6 @@
 # Tomcat
 server:
-  port: 8083
-
-file-server:
-  root-path: F:\JavaProject\file-save-path\
+  port: 8084
 
 # Spring
 spring:
@@ -14,14 +11,14 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   application:
     # 应用名称
-    name: opentool-system
+    name: opentool-ai-tool
     profiles:
       # 环境配置：dev、production
       active: dev
     cloud:
       nacos:
         discovery:
-          # 服务注册
+          # 服务注册地址
           server-addr: localhost:8848
         config:
           # 配置中心地址
@@ -31,12 +28,6 @@ spring:
           # 共享配置
           shared-configs:
             - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-  servlet:
-    multipart:
-      max-file-size: 50MB
-      max-request-size: 50MB
-      resolve-lazily: true
-
 
 # Mybatis-Plus
 mybatis-plus:
@@ -44,15 +35,35 @@ mybatis-plus:
     # 将数据库中含有下划线字段映射成驼峰命名法
     map-underscore-to-camel-case: true
   # 指定类型别名的包路径
-  type-aliases-package: com.opentool.system.domain.entity
+  type-aliases-package: com.opentool.ai.tool.domain.entity
 
-# AliYun-OSS
-aliyun:
-  # 访问OSS的域名
-  endpoint: http://oss-cn-shenzhen.aliyuncs.com
-  accessKeyId: LTAI5tGzBmBrLy3R8e1E5ARf
-  accessKeySecret: ep3kt9X8zT1HlX5fjleGbmEH7SD1uE
-#  accessKeyId: xxx
-#  accessKeySecret: xxx
-  # 管理所存储Object的存储空间名称
-  bucketName: opentool
+opentool-system:
+  ribbon:
+    # 负载均衡规则
+    NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
+
+# Feign
+feign:
+  client:
+    config:
+      default: # default全局的配置
+        loggerLevel: BASIC # 日志级别，BASIC就是基本的请求和响应信息
+  httpclient:
+    enabled: true # 开启feign对HttpClient的支持
+    max-connections: 200 # 最大的连接数
+    max-connections-per-route: 50 # 每个路径的最大连接数
+
+# ChatGpt
+chatgpt:
+  apiHost: https://api.qqslyx.com/
+  apiKey: sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266
+  proxy:
+    httpHost: 127.0.0.1
+    port: 7890
+  timeout:
+    connect: 45
+    read: 45
+    write: 45
+
+
+

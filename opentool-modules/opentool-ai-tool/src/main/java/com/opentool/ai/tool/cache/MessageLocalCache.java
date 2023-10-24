@@ -1,4 +1,4 @@
-package com.opentool.system.cache;
+package com.opentool.ai.tool.cache;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;

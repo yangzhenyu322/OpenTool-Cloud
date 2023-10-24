@@ -1,13 +1,11 @@
-package com.opentool.system.service.impl;
+package com.opentool.ai.tool.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.opentool.system.cache.LocalCache;
-import com.opentool.system.cache.MessageLocalCache;
-import com.opentool.system.domain.vo.request.ChatRequest;
-import com.opentool.system.domain.vo.response.ChatResponse;
-import com.opentool.system.listener.OpenAISSEEventSourceListener;
-import com.opentool.system.service.IChatService;
+import com.opentool.ai.tool.cache.LocalCache;
+import com.opentool.ai.tool.cache.MessageLocalCache;
+import com.opentool.ai.tool.listener.OpenAISSEEventSourceListener;
+import com.opentool.ai.tool.service.IChatGPTService;
 import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.OpenAiStreamClient;
 import com.unfbx.chatgpt.entity.chat.ChatChoice;
@@ -31,7 +29,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class ChatService implements IChatService {
+public class ChatGPTService implements IChatGPTService {
     @Autowired
     private OpenAiStreamClient openAiStreamClient; // 流式对话：用于与用户chat
     @Autowired
@@ -99,12 +97,12 @@ public class ChatService implements IChatService {
     /**
      * 传输信息
      * @param uid
-     * @param chatRequest
+     * @param msg
      * @return
      */
     @Override
-    public ChatResponse sseChat(String uid, ChatRequest chatRequest) {
-        if (StrUtil.isBlank(chatRequest.getMsg())) {
+    public Long sseChat(String uid, String msg) {
+        if (StrUtil.isBlank(msg)) {
             log.info("[{}]参数异常，msg为null", uid);
             throw new BaseException("参数异常，msg不能为空~");
         }
@@ -121,10 +119,10 @@ public class ChatService implements IChatService {
             }
 
             // 存储用户当前问题
-            Message currentMessage = Message.builder().content(chatRequest.getMsg()).role(Message.Role.USER).build();
+            Message currentMessage = Message.builder().content(msg).role(Message.Role.USER).build();
             messages.add(currentMessage);
         } else {
-            Message currentMessages = Message.builder().content(chatRequest.getMsg()).role(Message.Role.USER).build();
+            Message currentMessages = Message.builder().content(msg).role(Message.Role.USER).build();
             messages.add(currentMessages);
         }
 
@@ -136,7 +134,7 @@ public class ChatService implements IChatService {
         }
 
         // chat
-        log.info("[{}]成功提问：[{}]",uid, chatRequest.getMsg());
+        log.info("[{}]成功提问：[{}]",uid, msg);
         System.out.println("current newest 5 messages:" + messages.toString());
 
         OpenAISSEEventSourceListener openAISSEEventSourceListener = new OpenAISSEEventSourceListener(sseEmitter, uid, messages);
@@ -151,10 +149,7 @@ public class ChatService implements IChatService {
             e.printStackTrace();
         }
 
-        ChatResponse response = new ChatResponse();
-        response.setQuestionTokens(completion.tokens());
-
-        return response;
+        return completion.tokens();
     }
 
     /**

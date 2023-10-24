@@ -9,9 +9,9 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>opentool-modules-dashboard</artifactId>
+    <artifactId>opentool-modules-ai-tool</artifactId>
     <description>
-        opentool-dashboard业务模块
+        opentool-ai-tool业务模块
     </description>
 
     <dependencies>
@@ -25,6 +25,12 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
+
+        <!-- chatgpt-java -->
+        <dependency>
+            <groupId>com.unfbx</groupId>
+            <artifactId>chatgpt-java</artifactId>
         </dependency>
 
         <!-- 系统接口 -->
@@ -53,5 +59,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
