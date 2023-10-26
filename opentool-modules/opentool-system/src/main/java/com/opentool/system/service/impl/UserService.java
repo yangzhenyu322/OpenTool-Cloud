@@ -34,5 +34,4 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IUserS
                 .orderByAsc("create_time");
         return userMapper.selectMaps(userQuery);
     }
-
 }

@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class OpenToolAiToolApplication {
     public static void main(String[] args) {
         SpringApplication.run(OpenToolAiToolApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  OpenTool-Dashboard业务模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
+        System.out.println("(♥◠‿◠)ﾉﾞ  OpenTool-Ai-Tool业务模块启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 "   ____                _______          _ \n" +
                 "  / __ \\              |__   __|        | |\n" +
                 " | |  | |_ __   ___ _ __ | | ___   ___ | |\n" +

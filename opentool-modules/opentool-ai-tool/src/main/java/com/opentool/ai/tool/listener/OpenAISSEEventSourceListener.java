@@ -1,8 +1,10 @@
 package com.opentool.ai.tool.listener;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opentool.ai.tool.cache.MessageLocalCache;
+import com.opentool.ai.tool.domain.entity.ChatLog;
+import com.opentool.ai.tool.mapper.ChatLogMapper;
 import com.unfbx.chatgpt.entity.chat.ChatCompletionResponse;
 import com.unfbx.chatgpt.entity.chat.Message;
 import lombok.SneakyThrows;
@@ -25,16 +27,19 @@ import java.util.Objects;
 @Slf4j
 public class OpenAISSEEventSourceListener extends EventSourceListener {
     private long tokens; // tokens数
+    private String answer = ""; // 回答文本
     private SseEmitter sseEmitter; // sse连接
     private String uid; // 用户id
-    private String answer; // 回答文本
-    private List<Message> messages; // 历史消息
+    private List<Message> messages;
+    private ChatLogMapper chatLogMapper;
+    private ChatLog chatLog;
 
-
-    public OpenAISSEEventSourceListener(SseEmitter sseEmitter, String uid, List<Message> messages) {
+    public OpenAISSEEventSourceListener(SseEmitter sseEmitter, String uid, List<Message> messages, ChatLogMapper chatLogMapper, ChatLog chatLog) {
         this.sseEmitter = sseEmitter;
         this.uid = uid;
         this.messages = messages;
+        this.chatLogMapper = chatLogMapper;
+        this.chatLog = chatLog;
     }
 
     @SneakyThrows
@@ -44,10 +49,12 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
         tokens += 1;
         if (data.equals("[DONE]")) {
             log.info("OpenAI返回数据结束了");
-            // 缓存历史数据
-            Message currentMessage = Message.builder().content(answer).role(Message.Role.ASSISTANT).build();
-            messages.add(currentMessage);
-            MessageLocalCache.CACHE.put("msg" + uid, JSONUtil.toJsonStr(messages), MessageLocalCache.TIMEOUT);
+            // 存储答案
+            log.info("开始持久化数据库");
+            this.messages.add(Message.builder().content(answer).role(Message.Role.ASSISTANT).build());
+            chatLog.setContent(JSONUtil.toJsonStr(messages));
+            chatLogMapper.updateById(chatLog);
+            log.info("数据库持久化完成");
 
             Map<String, String> map = new HashMap<>();
             map.put("tokens", String.valueOf(tokens()));
@@ -74,7 +81,10 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
                     .data(completionResponse.getChoices().get(0).getDelta())
                     .reconnectTime(3000));
 
-            answer += completionResponse.getChoices().get(0).getDelta().getContent();
+            String curContent = completionResponse.getChoices().get(0).getDelta().getContent();
+            if (StrUtil.isNotBlank(curContent)) {
+                answer += curContent;
+            }
         } catch (Exception e) {
             log.error("sse信息推送失败！");
             eventSource.cancel();

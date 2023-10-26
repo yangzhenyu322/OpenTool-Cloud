@@ -2,9 +2,10 @@ package com.opentool.ai.tool.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.opentool.ai.tool.cache.LocalCache;
-import com.opentool.ai.tool.cache.MessageLocalCache;
+import com.opentool.ai.tool.cache.SseLocalCache;
+import com.opentool.ai.tool.domain.entity.ChatLog;
 import com.opentool.ai.tool.listener.OpenAISSEEventSourceListener;
+import com.opentool.ai.tool.mapper.ChatLogMapper;
 import com.opentool.ai.tool.service.IChatGPTService;
 import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.OpenAiStreamClient;
@@ -15,12 +16,12 @@ import com.unfbx.chatgpt.entity.chat.Message;
 import com.unfbx.chatgpt.exception.BaseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * gpt业务类
@@ -35,6 +36,11 @@ public class ChatGPTService implements IChatGPTService {
     @Autowired
     private OpenAiClient openAiClient; // 阻塞对话：用于总结历史对话
 
+    @Autowired
+    private ChatLogMapper chatLogMapper;
+    @Value("${chatgpt.summary.rule}")
+    private String rule;
+
     /**
      * 创建see连接
      * @param uid
@@ -47,12 +53,12 @@ public class ChatGPTService implements IChatGPTService {
         // 完成后回调
         sseEmitter.onCompletion(() -> {
             log.info("[{}]结束连接...................", uid);
-            LocalCache.CACHE.remove(uid);
+            SseLocalCache.CACHE.remove(uid);
         });
         // 超时回调
         sseEmitter.onTimeout(() -> {
             log.info("[{}]连接超时...................", uid);
-            LocalCache.CACHE.remove(uid);
+            SseLocalCache.CACHE.remove(uid);
         });
         // 异常回调
         sseEmitter.onError(throwable -> {
@@ -63,7 +69,7 @@ public class ChatGPTService implements IChatGPTService {
                         .name("发生异常！")
                         .data(Message.builder().content("发生异常重试！").build())
                         .reconnectTime(3000));
-                LocalCache.CACHE.remove(uid);
+                SseLocalCache.CACHE.remove(uid);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -75,7 +81,7 @@ public class ChatGPTService implements IChatGPTService {
             e.printStackTrace();
         }
         log.info("[{}]创建sse连接成功！", uid);
-        LocalCache.CACHE.put(uid, sseEmitter);
+        SseLocalCache.CACHE.put(uid, sseEmitter);
 
         return sseEmitter;
     }
@@ -86,11 +92,12 @@ public class ChatGPTService implements IChatGPTService {
      */
     @Override
     public void closeSee(String uid) {
-        SseEmitter sse = (SseEmitter) LocalCache.CACHE.get(uid);
+        SseEmitter sse = (SseEmitter) SseLocalCache.CACHE.get(uid);
         if (sse != null) {
+            log.info("客户端主动断开sse，关闭sse连接");
             sse.complete();
             // 移除
-            LocalCache.CACHE.remove(uid);
+            SseLocalCache.CACHE.remove(uid);
         }
     }
 
@@ -101,33 +108,76 @@ public class ChatGPTService implements IChatGPTService {
      * @return
      */
     @Override
-    public Long sseChat(String uid, String msg) {
+    public Long sseChat(String uid, String wid, String msg) {
         if (StrUtil.isBlank(msg)) {
             log.info("[{}]参数异常，msg为null", uid);
             throw new BaseException("参数异常，msg不能为空~");
         }
 
-        String messageContext = (String) MessageLocalCache.CACHE.get("msg" + uid);
-        List<Message> messages = new ArrayList<>();
-        if (StrUtil.isNotBlank(messageContext)) {
-            messages = JSONUtil.toList(messageContext, Message.class);
-            // 尝试进行对话总结
-            messages = summaryMessages(messages);
-            // 取出最新
-            if (messages.size() >= 10) {
-                messages = messages.subList(messages.size() - 10, messages.size());  // 获取最近5轮对话：（1条总结，4条完成）
-            }
+        // 获取上下文、总结文本
+        String messageContext;
+        String summary;
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("user_id", uid);
+        map.put("window_id", wid);
+        List<ChatLog> chatLogs = chatLogMapper.selectByMap(map);
+        ChatLog chatLog;
 
-            // 存储用户当前问题
-            Message currentMessage = Message.builder().content(msg).role(Message.Role.USER).build();
-            messages.add(currentMessage);
+        if (chatLogs.size() > 0) {
+            chatLog = chatLogs.get(0);
+            messageContext = chatLog.getContent();
+            summary = chatLog.getSummary();
         } else {
-            Message currentMessages = Message.builder().content(msg).role(Message.Role.USER).build();
-            messages.add(currentMessages);
+            log.info("[{}]没有历史窗口，开始创建新的对话窗口~", uid);
+            chatLog = new ChatLog();
+            chatLog.setUserId(uid);
+            chatLog.setWindowId(wid);
+            chatLog.setCreateTime(new Date());
+            chatLog.setContent(null);
+            chatLog.setRule(rule);
+            chatLog.setSummary("");
+            chatLogMapper.insert(chatLog);
+            log.info("新的对话窗口创建成功");
+
+            messageContext = null;
+            summary = null;
         }
 
-        SseEmitter sseEmitter = (SseEmitter) LocalCache.CACHE.get(uid);
+        // 历史对话列表
+        List<Message> messages = new ArrayList<>();  // 原始对话
+        List<Message> chatMessages = new ArrayList<>(); // 总结对话
+        if (StrUtil.isNotBlank(messageContext)) {
+            System.out.println("messageContext:" + messageContext);
+            messages = JSONUtil.toList(messageContext, Message.class);
+            // 取出最近3个对话
+            if (messages.size() >= 3 * 2) {
+                chatMessages = new ArrayList<>(messages.subList(messages.size() - 3 * 2, messages.size()));
+                // 联系上下文
+                if (StrUtil.isNotBlank(summary)) {
+                    chatMessages.add(0, Message.builder().content(summary).role(Message.Role.ASSISTANT).build());
+                }
 
+                if (messages.size() % 3 == 0) {
+                    // 历史对话为3的倍数，开始进行总结
+                    log.info("历史对话为3的倍数，开始进行上下文总结");
+                    summary = summaryHistoryMessages(chatMessages);
+                    log.info("总结完成，持久化summary");
+                    chatLog.setSummary(summary);
+                    chatLogMapper.updateById(chatLog);
+                }
+            } else {
+                for (int i = 0; i < messages.size(); i++) {
+                    chatMessages.add(messages.get(i));
+                }
+            }
+        }
+
+        // 存储用户当前问题
+        Message currentMessage = Message.builder().content(msg).role(Message.Role.USER).build();
+        messages.add(currentMessage);
+        chatMessages.add(currentMessage);
+
+        SseEmitter sseEmitter = (SseEmitter) SseLocalCache.CACHE.get(uid);
         if (sseEmitter == null) {
             log.info("[{}]聊天消息推送失败:,没有创建连接，请重试。", uid);
             throw new BaseException("[{}]聊天消息推送失败:,没有创建连接，请重试~");
@@ -135,12 +185,12 @@ public class ChatGPTService implements IChatGPTService {
 
         // chat
         log.info("[{}]成功提问：[{}]",uid, msg);
-        System.out.println("current newest 5 messages:" + messages.toString());
+        log.info("Chat-Messages:" + chatMessages.toString());
 
-        OpenAISSEEventSourceListener openAISSEEventSourceListener = new OpenAISSEEventSourceListener(sseEmitter, uid, messages);
+        OpenAISSEEventSourceListener openAISSEEventSourceListener = new OpenAISSEEventSourceListener(sseEmitter, uid, messages, chatLogMapper, chatLog);
         ChatCompletion completion = ChatCompletion
                 .builder()
-                .messages(messages)
+                .messages(chatMessages)
                 .model(ChatCompletion.Model.GPT_3_5_TURBO.getName())
                 .build();
         try {
@@ -154,38 +204,54 @@ public class ChatGPTService implements IChatGPTService {
 
     /**
      * 总结历史消息：防止tokens过长
-     * @param messages
+     * @param chatMessages
      * @return
      */
-    public List<Message> summaryMessages(List<Message> messages) {
-        // 如果总对话轮数大于等于4轮，则把前面3轮对话内容总结成一条
-        int summaryLength = 3 * 2; // 总结对话条数 = 轮数 * 2
-        int limitLength = 4 * 2; // 存储最大对话条数
-        if (messages.size() >= limitLength) {
-            List<Message> beforeMessages = messages.subList(0, summaryLength);
+    public String summaryHistoryMessages(List<Message> chatMessages) {
+        // 满足要求，开始总结
+        String summary = "";
+        chatMessages.add(Message.builder().content(rule).role(Message.Role.USER).build());  // 添加总结规则
+        // 进行总结
+        ChatCompletion chatCompletion = ChatCompletion.builder()
+                .messages(chatMessages)
+                .build();
+        ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion); // 开始阻塞
+        List<ChatChoice> choices = chatCompletionResponse.getChoices();
+        summary = choices.get(0).getMessage().getContent();
+        chatMessages.remove(chatMessages.size() - 1); // 移除rule
 
-            String question = "帮我把以前对话内容进行一个内容总结，要求：如果总对话内容字数超过800，则总结为原来的25%以内；如果总对话内容字数不超过800，则总结为原来的60%以内";
-            String answer = "";
-            Message questionMessage = Message.builder().content(question).role(Message.Role.USER).build();
-            beforeMessages.add(questionMessage);
+        return summary;
+    }
 
-            // 进行总结
-            ChatCompletion chatCompletion = ChatCompletion.builder()
-                    .messages(beforeMessages)
-                    .build();
-            ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion); // 开始阻塞
-            List<ChatChoice> choices = chatCompletionResponse.getChoices();
-            for(ChatChoice chatChoice: choices) {
-                answer = chatChoice.getMessage().getContent();
+
+    @Override
+    public List<String> getHistoryList(String uid, String wid) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("user_id", uid);
+        map.put("window_id", wid);
+        List<ChatLog> chatLogs = chatLogMapper.selectByMap(map);
+        if (chatLogs.size() > 0) {
+            ChatLog chatLog = chatLogs.get(0);
+            // 将List<Message>转换为List<String>
+            List<String> historys = new ArrayList<>();
+            List<Message> messages = JSONUtil.toList(chatLog.getContent(), Message.class);
+            for (Message message: messages) {
+                historys.add(message.getContent());
             }
-            // 更新缓存历史对话:最终得到一条总结对话 + 一轮最新完整对话
-            Message answerMessage = Message.builder().content(answer).role(Message.Role.ASSISTANT).build();
-            messages = messages.subList(summaryLength, messages.size());
-            messages.add(0, questionMessage);
-            messages.add(1, answerMessage);
-            System.out.println("Summary Message:" + messages.toString());
+
+            return historys;
         }
 
-        return messages;
+        return null;
+    }
+
+    @Override
+    public int cleanHistoryLog(String uid, String wid) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("user_id", uid);
+        map.put("window_id", wid);
+        int result = chatLogMapper.deleteByMap(map);
+        log.info(result > 0 ? "清除历史窗口成功":"清除失败，历史窗口不存在");
+        return result;
     }
 }

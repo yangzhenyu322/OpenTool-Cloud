@@ -9,7 +9,7 @@ import cn.hutool.core.date.DateUnit;
  * / @Author: ZenSheep
  * / @Date: 2023/10/19 15:10
  */
-public class LocalCache {
+public class SseLocalCache {
      // 缓存时长
     public static final long TIMEOUT = 10 * DateUnit.MINUTE.getMillis();
      // 清除问题

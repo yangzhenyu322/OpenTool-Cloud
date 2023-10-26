@@ -1,7 +1,8 @@
 package com.opentool.ai.tool.controller;
 
-import com.opentool.ai.tool.domain.chat.ChatRequest;
+import com.opentool.ai.tool.domain.vo.ChatRequest;
 import com.opentool.ai.tool.service.IChatGPTService;
+import com.opentool.common.core.domain.R;
 import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.entity.chat.ChatChoice;
 import com.unfbx.chatgpt.entity.chat.ChatCompletion;
@@ -62,8 +63,25 @@ public class ChatGPTController {
      */
     @PostMapping("/message")
     public Long sseChat(@RequestBody ChatRequest chatRequest) {
-        log.info("[{}]请求提问：[{}]",chatRequest.getUid(), chatRequest.getQuestion());
-        return chatGPTService.sseChat(chatRequest.getUid(), chatRequest.getQuestion());
+        log.info("[{}]-[{}]请求提问：[{}]",chatRequest.getUid(), chatRequest.getWid(), chatRequest.getQuestion());
+        return chatGPTService.sseChat(chatRequest.getUid(), chatRequest.getWid(), chatRequest.getQuestion());
+    }
+
+    /**
+     *
+     * 获取历史对话
+     * @param uid
+     * @param wid
+     * @return
+     */
+    @GetMapping("/history")
+    public R<?> getHistoryLog(@RequestParam("uid") String uid, @RequestParam("wid") String wid) {
+        return R.ok(chatGPTService.getHistoryList(uid, wid));
+    }
+
+    @DeleteMapping("/reset")
+    public R<?> cleanHistoryLog(@RequestParam("uid") String uid, @RequestParam("wid") String wid) {
+        return R.ok(chatGPTService.cleanHistoryLog(uid, wid) > 0 ? "清除历史对话成功" : "清除历史对话失败，对话不存在");
     }
 
     public static void main(String[] args) {

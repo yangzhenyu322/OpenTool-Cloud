@@ -1,4 +1,4 @@
-package com.opentool.ai.tool.domain.chat;
+package com.opentool.ai.tool.domain.vo;
 
 import lombok.Data;
 
@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class ChatRequest {
-    private String uid;
+    private String uid; // user id
+    private String wid; // window id
     private String question;
 }
