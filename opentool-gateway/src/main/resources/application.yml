@@ -5,8 +5,21 @@ spring:
     name: opentool-gateway # 服务名称
   cloud:
     nacos:
-      server-addr: localhost:8848 # nacos地址
+      discovery:
+        server-addr: localhost:8848 # nacos地址
+      config:
+        # 配置中心地址
+        server-addr: localhost:8848
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
     gateway:
+      discovery:
+        locator:
+          enabled: true # 是否与服务注册于发现组件进行结合，通过 serviceId 转发到具体的服务实例。默认为 false
+          lowerCaseServiceId: true # 是将请求路径上的服务名配置为小写（因为服务注册的时候，向注册中心注册时将服务名转成大写的了）
       routes: # 网关路由配置
         - id: opentool-system # 路由id
           uri: lb://opentool-system # 路由的目标地址 lb就是负载均衡，后面跟服务名称
@@ -43,3 +56,5 @@ spring:
         pool:
           # 在连接池中的空闲连接的最大空闲时间,默认60000ms，http.timeout默认为30000ms（要保证max-idle-time不大于connection-timeout）
           max-idle-time: 20000ms
+        connect-timeout: 60000 # 连接超时时间，单位为毫秒，默认为30秒
+        response-timeout: 60000 # 响应超时时间，单位为毫秒，默认为30秒

@@ -1,6 +1,5 @@
 package com.opentool.ai.tool.listener;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opentool.ai.tool.domain.entity.ChatLog;
@@ -82,7 +81,7 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
                     .reconnectTime(3000));
 
             String curContent = completionResponse.getChoices().get(0).getDelta().getContent();
-            if (StrUtil.isNotBlank(curContent)) {
+            if (curContent != null) {  // 不能把curContent == "    "忽略，否则代码缩进没了
                 answer += curContent;
             }
         } catch (Exception e) {
