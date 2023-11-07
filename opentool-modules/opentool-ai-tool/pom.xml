@@ -33,6 +33,12 @@
             <artifactId>chatgpt-java</artifactId>
         </dependency>
 
+        <!-- Microsoft-TTS -->
+        <dependency>
+            <groupId>com.microsoft.cognitiveservices.speech</groupId>
+            <artifactId>client-sdk</artifactId>
+        </dependency>
+
         <!-- 系统接口 -->
         <dependency>
             <groupId>com.opentool</groupId>

@@ -68,7 +68,6 @@ public class ChatGPTController {
     }
 
     /**
-     *
      * 获取历史对话
      * @param uid
      * @param wid

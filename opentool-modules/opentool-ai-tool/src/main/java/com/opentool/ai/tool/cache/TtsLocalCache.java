@@ -4,15 +4,15 @@ import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.date.DateUnit;
 
-/** Message本地缓存
+/**
  * / @Author: ZenSheep
- * / @Date: 2023/10/23 15:14
+ * / @Date: 2023/10/29 21:15
  */
-public class MessageLocalCache {
+public class TtsLocalCache {
     // 缓存时长
-    public static final long TIMEOUT = 10 * DateUnit.HOUR.getMillis();
+    public static final long TIMEOUT = 9 * DateUnit.MINUTE.getMillis();
     // 清除问题
-    private static final long CLEAN_TIMEOUT = 10 * DateUnit.HOUR.getMillis();
+    private static final long CLEAN_TIMEOUT = 9 * DateUnit.MINUTE.getMillis();
     // 缓存对象
     public  static final TimedCache<String, Object> CACHE = CacheUtil.newTimedCache(TIMEOUT);
 
