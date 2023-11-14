@@ -1,5 +1,7 @@
 package com.opentool.ai.tool.controller;
 
+import com.opentool.ai.tool.domain.entity.TtsStyle;
+import com.opentool.ai.tool.domain.entity.TtsStyleRole;
 import com.opentool.ai.tool.domain.vo.TtsRequest;
 import com.opentool.ai.tool.service.ITtsService;
 import com.opentool.common.core.domain.R;
@@ -39,6 +41,22 @@ public class TtsController {
     public R<?> getTtsRolesByLanguageAndSex(@PathVariable("language") String language, @PathVariable("gender") String gender) {
         List<String> ttsRoles = ttsService.getRolesByLanguageAndGender(language, gender);
         return R.ok(ttsRoles);
+    }
+
+    /**
+     * 获得风格列表
+     * @return
+     */
+    @GetMapping("/styles")
+    public R<?> getTtsStyles() {
+        List<TtsStyle> ttsStyles = ttsService.getStyles();
+        return R.ok(ttsStyles);
+    }
+
+    @GetMapping("/style/roles")
+    public R<?> getTtsStyleRoles() {
+        List<TtsStyleRole> ttsStyleRoles = ttsService.getStyleRoles();
+        return R.ok(ttsStyleRoles);
     }
 
     /**

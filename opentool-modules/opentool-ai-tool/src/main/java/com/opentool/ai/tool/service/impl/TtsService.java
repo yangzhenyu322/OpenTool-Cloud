@@ -4,9 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.opentool.ai.tool.auth.TtsAuthentication;
 import com.opentool.ai.tool.constant.TtsConstant;
 import com.opentool.ai.tool.domain.entity.TtsRole;
+import com.opentool.ai.tool.domain.entity.TtsStyle;
+import com.opentool.ai.tool.domain.entity.TtsStyleRole;
 import com.opentool.ai.tool.domain.vo.TtsRequest;
 import com.opentool.ai.tool.http.HttpsConnection;
 import com.opentool.ai.tool.mapper.TtsRoleMapper;
+import com.opentool.ai.tool.mapper.TtsStyleMapper;
+import com.opentool.ai.tool.mapper.TtsStyleRoleMapper;
 import com.opentool.ai.tool.service.ITtsService;
 import com.opentool.ai.tool.ssml.XmlDom;
 import com.opentool.ai.tool.utils.ByteArray;
@@ -34,9 +38,13 @@ import java.util.stream.Collectors;
 @Service
 public class TtsService implements ITtsService {
     @Autowired
-    TtsRoleMapper ttsRoleMapper;
+    private TtsRoleMapper ttsRoleMapper;
     @Autowired
-    RemoteFileService remoteFileService;
+    private TtsStyleMapper ttsStyleMapper;
+    @Autowired
+    private TtsStyleRoleMapper ttsStyleRoleMapper;
+    @Autowired
+    private RemoteFileService remoteFileService;
 
     @Override
     public List<String> getLanguages() {
@@ -58,6 +66,16 @@ public class TtsService implements ITtsService {
     }
 
     @Override
+    public List<TtsStyle> getStyles() {
+        return ttsStyleMapper.selectList(null);
+    }
+
+    @Override
+    public List<TtsStyleRole> getStyleRoles() {
+        return ttsStyleRoleMapper.selectList(null);
+    }
+
+    @Override
     public String synthesizeVoice(TtsRequest ttsRequest) throws Exception {
         String textToSynthesize = ttsRequest.getText(); // 转音文本
         String voiceName = ttsRequest.getVoiceRole(); // 语音模型
@@ -73,20 +91,20 @@ public class TtsService implements ITtsService {
         byte[] audioBuffer = new byte[0];
         if (textToSynthesize.length() < 1500) {
             ByteArray byteArray = new ByteArray(audioBuffer);
-            byteArray.cat(synthesize(textToSynthesize, outputFormat, deviceLanguage, genderName, voiceName));
+            byteArray.cat(synthesize(textToSynthesize, outputFormat, deviceLanguage, genderName, voiceName, ttsRequest.getStyle(), ttsRequest.getStyleDegree(), ttsRequest.getStyleRole(), ttsRequest.getRate(), ttsRequest.getPitch()));
             audioBuffer = byteArray.getArray();
         } else {
             // 大文件：断点续传
             int blocks = textToSynthesize.length() / 1500;
             for (int i = 0; i < blocks; i++) {
                 ByteArray byteArray = new ByteArray(audioBuffer);
-                byteArray.cat(synthesize(textToSynthesize.substring(i * 1500, i * 1500 + 1500), outputFormat, deviceLanguage, genderName, voiceName));
+                byteArray.cat(synthesize(textToSynthesize.substring(i * 1500, i * 1500 + 1500), outputFormat, deviceLanguage, genderName, voiceName, ttsRequest.getStyle(), ttsRequest.getStyleDegree(), ttsRequest.getStyleRole(), ttsRequest.getRate(), ttsRequest.getPitch()));
                 audioBuffer = byteArray.getArray();
             }
             // 拼接末尾不足1500字的部分
             if (textToSynthesize.length() % 1500 != 0) {
                 ByteArray byteArray = new ByteArray(audioBuffer);
-                byteArray.cat(synthesize(textToSynthesize.substring(blocks * 1500), outputFormat, deviceLanguage, genderName, voiceName));
+                byteArray.cat(synthesize(textToSynthesize.substring(blocks * 1500), outputFormat, deviceLanguage, genderName, voiceName, ttsRequest.getStyle(), ttsRequest.getStyleDegree(), ttsRequest.getStyleRole(), ttsRequest.getRate(), ttsRequest.getPitch()));
                 audioBuffer = byteArray.getArray();
             }
         }
@@ -127,7 +145,7 @@ public class TtsService implements ITtsService {
     /**
      * 通过指定的参数合成语音
      */
-    public byte[] synthesize(String textToSynthesize, String outputFormat, String locale, String genderName, String voiceName) throws Exception {
+    public byte[] synthesize(String textToSynthesize, String outputFormat, String locale, String genderName, String voiceName, String style, double styleDegree, String styleRole, double rate, double pitch) throws Exception {
         TtsAuthentication auth = new TtsAuthentication();
         String accessToken = auth.genAccessToken();
 
@@ -146,7 +164,7 @@ public class TtsService implements ITtsService {
         webRequest.setRequestProperty("User-Agent", "TTSAndroid");
         webRequest.setRequestProperty("Accept", "*/*");
 
-        String body = XmlDom.createDom(locale, genderName, voiceName, textToSynthesize);
+        String body = XmlDom.createDom(locale, genderName, voiceName, textToSynthesize, style, styleDegree, styleRole, rate, pitch);
         byte[] bytes = body.getBytes();
         webRequest.setRequestProperty("content-length", String.valueOf(bytes.length));
         webRequest.connect();
