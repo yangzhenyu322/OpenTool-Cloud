@@ -18,6 +18,7 @@ public class TtsLocalCache {
 
     static {
         // 启动定时任务
+
         CACHE.schedulePrune(CLEAN_TIMEOUT);
     }
 }

@@ -50,11 +50,18 @@ public class OSSFileUtils {
             return "wbmp/gif";
         }
 
+        if (fileName.equalsIgnoreCase(".mp3")) {
+            return "audio/mp3";
+        }
+
         if (fileName.equalsIgnoreCase(".html")) {
             return "text/html";
         }
         if (fileName.equalsIgnoreCase(".txt")) {
             return "text/plain";
+        }
+        if (fileName.equalsIgnoreCase(".xml")) {
+            return "text/xml";
         }
         if (fileName.equalsIgnoreCase(".vsd")) {
             return "application/vnd.visio";
@@ -67,9 +74,7 @@ public class OSSFileUtils {
                 fileName.equalsIgnoreCase(".doc")) {
             return "application/msword";
         }
-        if (fileName.equalsIgnoreCase(".xml")) {
-            return "text/xml";
-        }
+
         return "image/jpg";
     }
 }

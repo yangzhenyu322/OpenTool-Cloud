@@ -26,7 +26,7 @@ public class TtsAuthentication
         HttpsURLConnection webRequest;
 
         try {
-            String accessToken = (String) TtsLocalCache.CACHE.get("tts-auth");
+            String accessToken = (String) TtsLocalCache.CACHE.get("tts-auth", false); // 有坑：isUpdataLastAccess默认为true，每次过期前访问会重置超时时间
             if (StrUtil.isEmpty(accessToken)) {
                 webRequest = HttpsConnection.getHttpsConnection(TtsConstant.ACCESS_TOKEN_URI);
                 webRequest.setDoInput(true);

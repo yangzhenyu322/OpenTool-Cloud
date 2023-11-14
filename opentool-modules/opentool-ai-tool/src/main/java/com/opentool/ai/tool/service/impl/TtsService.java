@@ -70,7 +70,26 @@ public class TtsService implements ITtsService {
         String genderName = ttsRole.getGender(); // 人物性别
         String outputFormat = TtsConstant.AUDIO_FORMAT; // 语音输出格式
 
-        byte[] audioBuffer = synthesize(textToSynthesize, outputFormat, deviceLanguage, genderName, voiceName);
+        byte[] audioBuffer = new byte[0];
+        if (textToSynthesize.length() < 1500) {
+            ByteArray byteArray = new ByteArray(audioBuffer);
+            byteArray.cat(synthesize(textToSynthesize, outputFormat, deviceLanguage, genderName, voiceName));
+            audioBuffer = byteArray.getArray();
+        } else {
+            // 大文件：断点续传
+            int blocks = textToSynthesize.length() / 1500;
+            for (int i = 0; i < blocks; i++) {
+                ByteArray byteArray = new ByteArray(audioBuffer);
+                byteArray.cat(synthesize(textToSynthesize.substring(i * 1500, i * 1500 + 1500), outputFormat, deviceLanguage, genderName, voiceName));
+                audioBuffer = byteArray.getArray();
+            }
+            // 拼接末尾不足1500字的部分
+            if (textToSynthesize.length() % 1500 != 0) {
+                ByteArray byteArray = new ByteArray(audioBuffer);
+                byteArray.cat(synthesize(textToSynthesize.substring(blocks * 1500), outputFormat, deviceLanguage, genderName, voiceName));
+                audioBuffer = byteArray.getArray();
+            }
+        }
 
         // write the pcm data to the file
         File outputAudio = new File(TtsConstant.FILE_TEMP_PATH);
