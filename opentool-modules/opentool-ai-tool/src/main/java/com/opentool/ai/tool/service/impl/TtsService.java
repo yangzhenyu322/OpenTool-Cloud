@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,25 +89,36 @@ public class TtsService implements ITtsService {
         String genderName = ttsRole.getGender(); // 人物性别
         String outputFormat = TtsConstant.AUDIO_FORMAT; // 语音输出格式
 
+        // 文本分块
+        List<String> textToSynthesizeList = new ArrayList<>();
+        int blockSize = textToSynthesize.length() / 1500;
+        for (int i = 0; i < blockSize; i++) {
+            textToSynthesizeList.add(textToSynthesize.substring(i * 1500, i * 1500 + 1500));
+        }
+        if (textToSynthesize.length() % 1500 != 0) {
+            textToSynthesizeList.add(textToSynthesize.substring(blockSize * 1500));
+        }
+
+        // 并发合成语音
+        List<byte[]> audioBufferList = textToSynthesizeList.parallelStream().map(textToSynthesizeItem -> {
+            byte[] audioBufferItem;
+            try {
+                audioBufferItem = synthesize(textToSynthesizeItem, outputFormat, deviceLanguage, genderName, voiceName, ttsRequest.getStyle(), ttsRequest.getStyleDegree(), ttsRequest.getStyleRole(), ttsRequest.getRate(), ttsRequest.getPitch());
+            } catch (Exception e) {
+                log.error("语音块合成失败：" + textToSynthesizeItem);
+                throw new RuntimeException(e);
+            }
+            log.info("语音块合成成功");
+            return  audioBufferItem;
+        }).collect(Collectors.toList());
+
+        // 合并语音
         byte[] audioBuffer = new byte[0];
-        if (textToSynthesize.length() < 1500) {
+        for (byte[] audioBufferItem: audioBufferList) {
             ByteArray byteArray = new ByteArray(audioBuffer);
-            byteArray.cat(synthesize(textToSynthesize, outputFormat, deviceLanguage, genderName, voiceName, ttsRequest.getStyle(), ttsRequest.getStyleDegree(), ttsRequest.getStyleRole(), ttsRequest.getRate(), ttsRequest.getPitch()));
+            byteArray.cat(audioBufferItem);
             audioBuffer = byteArray.getArray();
-        } else {
-            // 大文件：断点续传
-            int blocks = textToSynthesize.length() / 1500;
-            for (int i = 0; i < blocks; i++) {
-                ByteArray byteArray = new ByteArray(audioBuffer);
-                byteArray.cat(synthesize(textToSynthesize.substring(i * 1500, i * 1500 + 1500), outputFormat, deviceLanguage, genderName, voiceName, ttsRequest.getStyle(), ttsRequest.getStyleDegree(), ttsRequest.getStyleRole(), ttsRequest.getRate(), ttsRequest.getPitch()));
-                audioBuffer = byteArray.getArray();
-            }
-            // 拼接末尾不足1500字的部分
-            if (textToSynthesize.length() % 1500 != 0) {
-                ByteArray byteArray = new ByteArray(audioBuffer);
-                byteArray.cat(synthesize(textToSynthesize.substring(blocks * 1500), outputFormat, deviceLanguage, genderName, voiceName, ttsRequest.getStyle(), ttsRequest.getStyleDegree(), ttsRequest.getStyleRole(), ttsRequest.getRate(), ttsRequest.getPitch()));
-                audioBuffer = byteArray.getArray();
-            }
+            log.info("完成语音合并");
         }
 
         // write the pcm data to the file
