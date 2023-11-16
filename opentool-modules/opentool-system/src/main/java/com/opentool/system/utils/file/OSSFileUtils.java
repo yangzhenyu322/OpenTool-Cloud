@@ -53,6 +53,9 @@ public class OSSFileUtils {
         if (fileName.equalsIgnoreCase(".mp3")) {
             return "audio/mp3";
         }
+        if (fileName.equalsIgnoreCase(".wav")) {
+            return "audio/wav";
+        }
 
         if (fileName.equalsIgnoreCase(".html")) {
             return "text/html";

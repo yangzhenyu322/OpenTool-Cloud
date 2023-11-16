@@ -1,7 +1,5 @@
 package com.opentool.ai.tool.constant;
 
-import com.opentool.ai.tool.utils.AudioFormatUtils;
-
 /**
  * TTS服务常量
  * / @Author: ZenSheep
@@ -15,15 +13,16 @@ public class TtsConstant {
     // TTS服务Uri
     public static final String TTS_SERVER_URI = "https://eastasia.tts.speech.microsoft.com/cognitiveservices/v1";
     // 语言：zh-CN、en_US
-    public static final String LOCALE = "yue-CN";
+//    public static final String LOCALE = "yue-CN";
     // 性别：Male、Female
-    public static final String GENDER = "Female";
+//    public static final String GENDER = "Female";
     // 角色
-    public static final String SHORTNAME = "yue-CN-XiaoMinNeural";
+//    public static final String SHORTNAME = "yue-CN-XiaoMinNeural";
     // 合成语音格式
-    public static final String AUDIO_FORMAT = AudioFormatUtils.AUDIO_24KHZ_48KBITRATE_MONO_MP3;
+//    public static final String AUDIO_FORMAT = AudioFormatUtils.AUDIO_24KHZ_48KBITRATE_MONO_MP3;
+//    public static final String AUDIO_FORMAT = AudioFormatUtils.RIFF_24KHZ_16BIT_MONO_PCM;
     // 文件本地缓存路径
-    public static final String FILE_TEMP_PATH = "./temp/tts/voice/temp.mp3";
+//    public static final String FILE_TEMP_PATH = "./temp/tts/voice/temp.wav";
     // 文件OSS上传路径
     public static final String OSS_UPLOAD_PATH = "tts/voice";
 }

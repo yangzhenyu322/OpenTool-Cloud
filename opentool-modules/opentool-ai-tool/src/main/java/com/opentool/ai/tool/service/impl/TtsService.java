@@ -13,6 +13,7 @@ import com.opentool.ai.tool.mapper.TtsStyleMapper;
 import com.opentool.ai.tool.mapper.TtsStyleRoleMapper;
 import com.opentool.ai.tool.service.ITtsService;
 import com.opentool.ai.tool.ssml.XmlDom;
+import com.opentool.ai.tool.utils.AudioFormatUtils;
 import com.opentool.ai.tool.utils.ByteArray;
 import com.opentool.common.core.utils.file.MultipartFileUtils;
 import com.opentool.system.api.RemoteFileService;
@@ -80,6 +81,8 @@ public class TtsService implements ITtsService {
     public String synthesizeVoice(TtsRequest ttsRequest) throws Exception {
         String textToSynthesize = ttsRequest.getText(); // 转音文本
         String voiceName = ttsRequest.getVoiceRole(); // 语音模型
+        String audioTempPath = "./temp/tts/voice";
+        String audioName =  ttsRequest.getAudioFileName() + "." + ttsRequest.getAudioFileStyle();
 
         Map<String, Object> roleMap = new HashMap<>();
         roleMap.put("role", voiceName);
@@ -87,7 +90,17 @@ public class TtsService implements ITtsService {
 
         String deviceLanguage = ttsRole.getLocate(); // 区域设置
         String genderName = ttsRole.getGender(); // 人物性别
-        String outputFormat = TtsConstant.AUDIO_FORMAT; // 语音输出格式
+
+        // 语音输出格式
+        String outputFormat;
+        if ("wav".equals(ttsRequest.getAudioFileStyle())) {
+            outputFormat = AudioFormatUtils.RIFF_24KHZ_16BIT_MONO_PCM;
+        } else if ("mp3".equals(ttsRequest.getAudioFileStyle())) {
+            outputFormat = AudioFormatUtils.AUDIO_24KHZ_48KBITRATE_MONO_MP3;
+        } else {
+            outputFormat = "";
+            log.error(audioName + "：未匹配到合适音频格式");
+        }
 
         // 文本分块
         List<String> textToSynthesizeList = new ArrayList<>();
@@ -121,15 +134,15 @@ public class TtsService implements ITtsService {
             log.info("完成语音合并");
         }
 
-        // write the pcm data to the file
-        File outputAudio = new File(TtsConstant.FILE_TEMP_PATH);
+        // 将文件写入缓存目录中
+        File outputAudio = new File(audioTempPath + audioName);
         // 创建路径中的文件夹
         outputAudio.getParentFile().mkdirs();
         try {
             if (outputAudio.createNewFile()) {
-                log.info(TtsConstant.FILE_TEMP_PATH+ "文件创建成功");
+                log.info(audioName+ ":文件创建成功");
             } else {
-                log.info(TtsConstant.FILE_TEMP_PATH + "文件已存在");
+                log.info(audioName + ":文件已存在");
             }
         } catch (IOException e) {
             log.info("文件创建失败：" + e.getMessage());
@@ -143,13 +156,14 @@ public class TtsService implements ITtsService {
         // 将合成的音频上传的OSS
         MultipartFile multipartFile = MultipartFileUtils.fileToMultipartFile(outputAudio);
         String fileUploadPath = remoteFileService.uploadFile(multipartFile, TtsConstant.OSS_UPLOAD_PATH);
+        log.info(audioName + ":文件已上传至oss");
 
         // 删除缓存本地文件
-//        if (outputAudio.delete()) {
-//            log.info("本地缓存文件删除成功");
-//        } else {
-//            log.info("本地缓存文件删除失败");
-//        }
+        if (outputAudio.delete()) {
+            log.info(audioName + ":本地缓存文件删除成功");
+        } else {
+            log.info(audioName + ":本地缓存文件删除失败");
+        }
 
         return fileUploadPath;
     }

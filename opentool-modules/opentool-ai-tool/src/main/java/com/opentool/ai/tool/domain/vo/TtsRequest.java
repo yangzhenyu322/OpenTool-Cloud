@@ -19,5 +19,6 @@ public class TtsRequest {
     private String styleRole; // 模仿角色
     private double rate; // 音速
     private double pitch; // 音调
-
+    private String audioFileName; // 音频文件名
+    private String audioFileStyle; // 音频文件格式
 }
