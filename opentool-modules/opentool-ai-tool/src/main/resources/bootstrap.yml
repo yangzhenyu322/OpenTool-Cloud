@@ -28,6 +28,11 @@ spring:
           # 共享配置
           shared-configs:
             - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  servlet:
+    multipart:
+      max-file-size: 100MB # 设置单个文件最大大小
+      max-request-size: 100MB # 设置多个文件最大大小
+      resolve-lazily: true
 
 # Mybatis-Plus
 mybatis-plus:
@@ -66,3 +71,8 @@ chatgpt:
     write: 45
   summary:
     rule: 帮我把以前对话内容进行一个内容总结，规则如下：1、如果总对话内容字数超过800，则总结为原来的50%以内,最终字数不超过600字;2、如果总对话内容字数不超过600，则总结为原来的80%以内.
+
+# Stt
+stt:
+  apiKey: f258c08822184feea388f6b58160295e  #每月免费5h: 851a20680bb14607998ba2fe33af7e29、即用即付（）：f258c08822184feea388f6b58160295e
+  region: eastasia

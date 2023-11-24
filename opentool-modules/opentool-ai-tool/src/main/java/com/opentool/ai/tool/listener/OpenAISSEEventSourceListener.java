@@ -71,7 +71,7 @@ public class OpenAISSEEventSourceListener extends EventSourceListener {
             return;
         }
 
-        // ！！！传输消息！！！
+        // 向用户传输消息
         ObjectMapper mapper = new ObjectMapper();
         ChatCompletionResponse completionResponse = mapper.readValue(data, ChatCompletionResponse.class);
         try {

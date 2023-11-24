@@ -2,9 +2,13 @@ package com.opentool.common.core.utils.date;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
@@ -76,5 +80,26 @@ public class DateUtils {
     public static String getDatePath(String format) {
         Date now = new Date();
         return DateFormatUtils.format(now, format).replace(':', '-');
+    }
+
+    /**
+     * 纳秒转换成mm:ss.SSS时间戳格式
+     * @param nanoTimestamp
+     * @return
+     */
+    public static String convertNanoTimestamp(BigInteger nanoTimestamp) {
+        // 将纳秒级时间戳转换为秒级时间戳
+        long seconds = nanoTimestamp.longValue() / 1_000_000_000;
+        // 获取纳秒部分
+        int nanos = (int) (nanoTimestamp.longValue() % 1_000_000_000);
+
+        // 将秒级时间戳转换为LocalDateTime对象
+        LocalDateTime dateTime = LocalDateTime.ofEpochSecond(seconds, nanos, ZoneOffset.UTC);
+
+        // 定义时间格式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("mm:ss.SSS");
+
+        // 格式化时间并返回
+        return dateTime.format(formatter);
     }
 }

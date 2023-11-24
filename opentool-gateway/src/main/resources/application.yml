@@ -36,7 +36,7 @@ spring:
         - id: opentool-ai-tool
           uri: lb://opentool-ai-tool
           predicates:
-            - Path=/chatgpt/**, /tts/**
+            - Path=/chatgpt/**, /tts/**, /stt/**
       globalcors: # 全局的跨域请求
         add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
         cors-configurations:

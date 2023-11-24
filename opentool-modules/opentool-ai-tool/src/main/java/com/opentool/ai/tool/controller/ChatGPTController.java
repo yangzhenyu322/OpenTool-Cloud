@@ -2,6 +2,7 @@ package com.opentool.ai.tool.controller;
 
 import com.opentool.ai.tool.domain.vo.ChatRequest;
 import com.opentool.ai.tool.service.IChatGPTService;
+import com.opentool.ai.tool.service.ISseService;
 import com.opentool.common.core.domain.R;
 import com.unfbx.chatgpt.OpenAiClient;
 import com.unfbx.chatgpt.entity.chat.ChatChoice;
@@ -34,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 public class ChatGPTController {
     @Autowired
     private IChatGPTService chatGPTService;
+    @Autowired
+    private ISseService sseService;
 
     /**
      * 创建sse连接
@@ -42,8 +45,7 @@ public class ChatGPTController {
      */
     @GetMapping("/createSse/{uid}")
     public SseEmitter createSseConnect(@PathVariable("uid") String uid){
-        log.info("[{}]开始创建sse连接", uid);
-        return chatGPTService.createSee(uid);
+        return sseService.createSee(uid);
     }
 
     /**
@@ -52,8 +54,7 @@ public class ChatGPTController {
      */
     @GetMapping("/closeSse/{uid}")
     public String closeConnect(@PathVariable("uid") String uid) {
-        chatGPTService.closeSee(uid);
-        return "关闭后端sse连接成功:" + uid;
+        return sseService.closeSee(uid);
     }
 
     /**

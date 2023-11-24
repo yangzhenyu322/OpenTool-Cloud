@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -42,66 +41,6 @@ public class ChatGPTService implements IChatGPTService {
     private String rule;
 
     /**
-     * 创建see连接
-     * @param uid
-     * @return
-     */
-    @Override
-    public SseEmitter createSee(String uid) {
-        // 默认30秒超时，设置0L则永不超时
-        SseEmitter sseEmitter = new SseEmitter(0L);
-        // 完成后回调
-        sseEmitter.onCompletion(() -> {
-            log.info("[{}]结束连接...................", uid);
-            SseLocalCache.CACHE.remove(uid);
-        });
-        // 超时回调
-        sseEmitter.onTimeout(() -> {
-            log.info("[{}]连接超时...................", uid);
-            SseLocalCache.CACHE.remove(uid);
-        });
-        // 异常回调
-        sseEmitter.onError(throwable -> {
-            try {
-                log.info("[{}]连接异常,{}", uid, throwable.toString());
-                sseEmitter.send(SseEmitter.event()
-                        .id(uid)
-                        .name("发生异常！")
-                        .data(Message.builder().content("发生异常重试！").build())
-                        .reconnectTime(3000));
-                SseLocalCache.CACHE.remove(uid);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-        try {
-            sseEmitter.send(SseEmitter.event().reconnectTime(5000));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        log.info("[{}]创建sse连接成功！", uid);
-        SseLocalCache.CACHE.put(uid, sseEmitter);
-
-        return sseEmitter;
-    }
-
-    /**
-     * 关闭sse连接
-     * @param uid
-     */
-    @Override
-    public void closeSee(String uid) {
-        SseEmitter sse = (SseEmitter) SseLocalCache.CACHE.get(uid);
-        if (sse != null) {
-            log.info("客户端主动断开sse，关闭sse连接");
-            sse.complete();
-            // 移除
-            SseLocalCache.CACHE.remove(uid);
-        }
-    }
-
-    /**
      * 传输信息
      * @param uid
      * @param msg
@@ -110,7 +49,7 @@ public class ChatGPTService implements IChatGPTService {
     @Override
     public Long sseChat(String uid, String wid, String msg) {
         if (StrUtil.isBlank(msg)) {
-            log.info("[{}]参数异常，msg为null", uid);
+            log.error("[{}]参数异常，msg为null", uid);
             throw new BaseException("参数异常，msg不能为空~");
         }
 
@@ -147,7 +86,7 @@ public class ChatGPTService implements IChatGPTService {
         List<Message> messages = new ArrayList<>();  // 原始对话
         List<Message> chatMessages = new ArrayList<>(); // 总结对话
         if (StrUtil.isNotBlank(messageContext)) {
-            System.out.println("messageContext:" + messageContext);
+//            System.out.println("messageContext:" + messageContext);
             messages = JSONUtil.toList(messageContext, Message.class);
             // 取出最近3个对话
             if (messages.size() >= 3 * 2) {
@@ -179,8 +118,8 @@ public class ChatGPTService implements IChatGPTService {
 
         SseEmitter sseEmitter = (SseEmitter) SseLocalCache.CACHE.get(uid);
         if (sseEmitter == null) {
-            log.info("[{}]聊天消息推送失败:,没有创建连接，请重试。", uid);
-            throw new BaseException("[{}]聊天消息推送失败:,没有创建连接，请重试~");
+            log.info("[{}]获取sse失败,没有创建连接，请重试。", uid);
+            throw new BaseException("[{}]获取sse失败,没有创建连接，请重试~");
         }
 
         // chat
@@ -191,7 +130,7 @@ public class ChatGPTService implements IChatGPTService {
         ChatCompletion completion = ChatCompletion
                 .builder()
                 .messages(chatMessages)
-                .model(ChatCompletion.Model.GPT_3_5_TURBO.getName())
+                .model(ChatCompletion.Model.GPT_3_5_TURBO_16K.getName())
                 .build();
         try {
             openAiStreamClient.streamChatCompletion(completion, openAISSEEventSourceListener);
