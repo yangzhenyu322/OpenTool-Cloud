@@ -28,6 +28,11 @@ public class SttController {
     @Autowired
     private ISseService sseService;
 
+    @GetMapping("/languages")
+    public R<?> getSupportedLanguages() {
+        return R.ok(sttService.getLanguages());
+    }
+
     /**
      * 音频文件上传接口
      * @param file
@@ -60,6 +65,6 @@ public class SttController {
     @PostMapping("/speechRecognition")
     public R<?> speechRecognition(@RequestBody SttRequest sttRequest) throws IOException, ExecutionException, InterruptedException {
         log.info("[{}]请求转换音频：[{}]",sttRequest.getUid(), sttRequest.getUrlPath());
-        return R.ok(sttService.speechRecognition(sttRequest.getUid(), sttRequest.getUrlPath()));
+        return R.ok(sttService.speechRecognition(sttRequest.getUid(), sttRequest.getUrlPath(), sttRequest.getTargetLanguage()));
     }
 }

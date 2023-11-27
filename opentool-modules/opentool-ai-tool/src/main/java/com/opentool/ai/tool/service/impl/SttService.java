@@ -7,6 +7,8 @@ import com.microsoft.cognitiveservices.speech.SpeechConfig;
 import com.microsoft.cognitiveservices.speech.audio.*;
 import com.microsoft.cognitiveservices.speech.transcription.ConversationTranscriber;
 import com.opentool.ai.tool.cache.SseLocalCache;
+import com.opentool.ai.tool.domain.entity.SttLanguage;
+import com.opentool.ai.tool.mapper.SttLanguageMapper;
 import com.opentool.ai.tool.service.ISttService;
 import com.opentool.ai.tool.utils.BinaryAudioStreamReader;
 import com.opentool.common.core.exception.base.BaseException;
@@ -24,6 +26,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
@@ -35,13 +38,15 @@ import java.util.concurrent.Semaphore;
 @Slf4j
 @Service
 public class SttService implements ISttService {
-    @Autowired
-    private RemoteFileService remoteFileService;
-
     @Value("${stt.apiKey}")
     private String apiKey;
     @Value("${stt.region}")
     private String region;
+
+    @Autowired
+    private RemoteFileService remoteFileService;
+    @Autowired
+    private SttLanguageMapper sttLanguageMapper;
 
     @Override
     public String uploadFile(MultipartFile file, String storagePath) {
@@ -49,7 +54,7 @@ public class SttService implements ISttService {
     }
 
     @Override
-    public String speechRecognition(String uid, String urlPath) throws IOException, ExecutionException, InterruptedException {
+    public String speechRecognition(String uid, String urlPath, String targetLanguage) throws IOException, ExecutionException, InterruptedException {
         if (StrUtil.isBlank(urlPath)) {
             log.error("[{}]url路径为空，无法进行音频识别", uid);
             throw new BaseException("参数异常，url路径不能为空");
@@ -75,7 +80,7 @@ public class SttService implements ISttService {
                 PullAudioInputStream pullAudioInputStream = AudioInputStream.createPullStream(new BinaryAudioStreamReader(new URL(urlPath)),
                         AudioStreamFormat.getCompressedFormat(AudioStreamContainerFormat.ANY));
                 AudioConfig audioConfig = AudioConfig.fromStreamInput(pullAudioInputStream);
-                speechConfig.setSpeechRecognitionLanguage("zh-CN");
+                speechConfig.setSpeechRecognitionLanguage(targetLanguage);
                 // 初始化信号量
                 Semaphore stopRecognitionSemaphore = new Semaphore(0);
                 // ConversationTranscriber配置
@@ -201,5 +206,10 @@ public class SttService implements ISttService {
         sttThread.start();
 
         return "[" + uid + "]开始进行音频识别";
+    }
+
+    @Override
+    public List<SttLanguage> getLanguages() {
+        return sttLanguageMapper.selectList(null);
     }
 }

@@ -10,4 +10,5 @@ import lombok.Data;
 public class SttRequest {
     private String uid; // user id
     private String urlPath; // url path
+    private String targetLanguage; // 目标转换语言
 }
