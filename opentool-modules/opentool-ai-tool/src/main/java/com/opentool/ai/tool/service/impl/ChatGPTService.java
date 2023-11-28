@@ -31,9 +31,13 @@ import java.util.*;
 @Service
 public class ChatGPTService implements IChatGPTService {
     @Autowired
-    private OpenAiStreamClient openAiStreamClient; // 流式对话：用于与用户chat
+    private OpenAiStreamClient openAiStreamClient3_5; // 流式对话：用于与用户chat
     @Autowired
-    private OpenAiClient openAiClient; // 阻塞对话：用于总结历史对话
+    private OpenAiClient openAiClient3_5; // 阻塞对话：用于总结历史对话
+    @Autowired
+    private OpenAiStreamClient openAiStreamClient4; // 流式对话：用于与用户chat
+    @Autowired
+    private OpenAiClient openAiClient4; // 阻塞对话：用于总结历史对话
 
     @Autowired
     private ChatLogMapper chatLogMapper;
@@ -42,12 +46,12 @@ public class ChatGPTService implements IChatGPTService {
 
     /**
      * 传输信息
-     * @param uid
-     * @param msg
-     * @return
+     * @param uid 用户id
+     * @param msg 问题文本
+     * @return 提问结果反馈消息
      */
     @Override
-    public Long sseChat(String uid, String wid, String msg) {
+    public String sseChat(String uid, String wid, String model, String msg) {
         if (StrUtil.isBlank(msg)) {
             log.error("[{}]参数异常，msg为null", uid);
             throw new BaseException("参数异常，msg不能为空~");
@@ -56,7 +60,7 @@ public class ChatGPTService implements IChatGPTService {
         // 获取上下文、总结文本
         String messageContext;
         String summary;
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("user_id", uid);
         map.put("window_id", wid);
         List<ChatLog> chatLogs = chatLogMapper.selectByMap(map);
@@ -86,28 +90,25 @@ public class ChatGPTService implements IChatGPTService {
         List<Message> messages = new ArrayList<>();  // 原始对话
         List<Message> chatMessages = new ArrayList<>(); // 总结对话
         if (StrUtil.isNotBlank(messageContext)) {
-//            System.out.println("messageContext:" + messageContext);
             messages = JSONUtil.toList(messageContext, Message.class);
-            // 取出最近3个对话
-            if (messages.size() >= 3 * 2) {
-                chatMessages = new ArrayList<>(messages.subList(messages.size() - 3 * 2, messages.size()));
+            // 取出最近5个对话
+            if (messages.size() >= 5 * 2) {
+                chatMessages = new ArrayList<>(messages.subList(messages.size() - 5 * 2, messages.size()));
                 // 联系上下文
                 if (StrUtil.isNotBlank(summary)) {
                     chatMessages.add(0, Message.builder().content(summary).role(Message.Role.ASSISTANT).build());
                 }
 
-                if (messages.size() % 3 == 0) {
-                    // 历史对话为3的倍数，开始进行总结
-                    log.info("历史对话为3的倍数，开始进行上下文总结");
-                    summary = summaryHistoryMessages(chatMessages);
+                if (messages.size() % 5 == 0) {
+                    // 历史对话为5的倍数，开始进行总结
+                    log.info("历史对话为5的倍数，开始进行上下文总结");
+                    summary = summaryHistoryMessages(chatMessages, model);
                     log.info("总结完成，持久化summary");
                     chatLog.setSummary(summary);
                     chatLogMapper.updateById(chatLog);
                 }
             } else {
-                for (int i = 0; i < messages.size(); i++) {
-                    chatMessages.add(messages.get(i));
-                }
+                chatMessages.addAll(messages);
             }
         }
 
@@ -124,44 +125,56 @@ public class ChatGPTService implements IChatGPTService {
 
         // chat
         log.info("[{}]成功提问：[{}]",uid, msg);
-        log.info("Chat-Messages:" + chatMessages.toString());
+//        log.info("Chat-Messages:" + chatMessages.toString());
 
-        OpenAISSEEventSourceListener openAISSEEventSourceListener = new OpenAISSEEventSourceListener(sseEmitter, uid, messages, chatLogMapper, chatLog);
+        OpenAISSEEventSourceListener openAiSseEventSourceListener = new OpenAISSEEventSourceListener(sseEmitter, uid, messages, chatLogMapper, chatLog);
         ChatCompletion completion = ChatCompletion
                 .builder()
                 .messages(chatMessages)
-                .model(ChatCompletion.Model.GPT_3_5_TURBO_16K.getName())
+                // 推荐使用 GPT_3_5_TURBO_1106 或 GPT_4_1106_PREVIEW 或 GPT_4_VISION_PREVIEW
+                .model(model)
                 .build();
         try {
-            openAiStreamClient.streamChatCompletion(completion, openAISSEEventSourceListener);
+            if ("GPT3.5".equals(distinguishModel(model))) {
+                openAiStreamClient3_5.streamChatCompletion(completion, openAiSseEventSourceListener);
+            } else if ("GPT4".equals(distinguishModel(model))) {
+                openAiStreamClient4.streamChatCompletion(completion, openAiSseEventSourceListener);
+            }
         } catch (BaseException e) {
             e.printStackTrace();
         }
 
-        return completion.tokens();
+        return "成功调用open api，开始返回流式响应数据";
     }
 
     /**
      * 总结历史消息：防止tokens过长
-     * @param chatMessages
-     * @return
+     * @param chatMessages 需要总结的上下文
+     * @return 总结文本
      */
-    public String summaryHistoryMessages(List<Message> chatMessages) {
+    public String summaryHistoryMessages(List<Message> chatMessages, String model) {
         // 满足要求，开始总结
-        String summary = "";
+        String summary;
         chatMessages.add(Message.builder().content(rule).role(Message.Role.USER).build());  // 添加总结规则
         // 进行总结
-        ChatCompletion chatCompletion = ChatCompletion.builder()
+        ChatCompletion chatCompletion = ChatCompletion
+                .builder()
                 .messages(chatMessages)
+                .model(model)
                 .build();
-        ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion); // 开始阻塞
+        // 开始阻塞
+        ChatCompletionResponse chatCompletionResponse = null;
+        if ("GPT3.5".equals(distinguishModel(model))) {
+            chatCompletionResponse = openAiClient3_5.chatCompletion(chatCompletion);
+        } else if ("GPT4".equals(distinguishModel(model))) {
+            chatCompletionResponse = openAiClient4.chatCompletion(chatCompletion);
+        }
         List<ChatChoice> choices = chatCompletionResponse.getChoices();
         summary = choices.get(0).getMessage().getContent();
         chatMessages.remove(chatMessages.size() - 1); // 移除rule
 
         return summary;
     }
-
 
     @Override
     public List<String> getHistoryList(String uid, String wid) {
@@ -192,5 +205,19 @@ public class ChatGPTService implements IChatGPTService {
         int result = chatLogMapper.deleteByMap(map);
         log.info(result > 0 ? "清除历史窗口成功":"清除失败，历史窗口不存在");
         return result;
+    }
+
+    /**
+     * 判断当前模型属于哪个模型大类
+     * @param model 模型名称
+     * @return 模型大类
+     */
+    public static String distinguishModel(String model) {
+        if (model.contains("gpt-3.5")) {
+            return "GPT3.5";
+        } else if (model.contains("gpt-4")) {
+            return "GPT4";
+        }
+        return "GPT3.5";
     }
 }

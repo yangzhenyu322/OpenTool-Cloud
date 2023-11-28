@@ -61,7 +61,10 @@ feign:
 # ChatGpt
 chatgpt:
   apiHost: https://api.qqslyx.com/
-  apiKey: sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266
+  apiKey3_5: sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266
+  apiKey4: sk-GxoeUJ0L8vOjWRSP0eAbD53e4fA8436fB894Aa4c4f9f1220
+  # 3.5：sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266
+  # 4：sk-GxoeUJ0L8vOjWRSP0eAbD53e4fA8436fB894Aa4c4f9f1220
   proxy:
     httpHost: 127.0.0.1
     port: 7890
@@ -70,9 +73,13 @@ chatgpt:
     read: 45
     write: 45
   summary:
-    rule: 帮我把以前对话内容进行一个内容总结，规则如下：1、如果总对话内容字数超过800，则总结为原来的50%以内,最终字数不超过600字;2、如果总对话内容字数不超过600，则总结为原来的80%以内.
+    rule: 帮我把以前对话内容进行一个内容总结，规则如下：1、如果总对话内容字数超过1000，则总结最终字数不超过1000字;2、如果总对话内容字数不超过1000，则全部保留.
+
+# tts
+tts:
+  apiKey: dbc728ec904c412db821e49484047059 # 每月免费5h
 
 # Stt
 stt:
-  apiKey: f258c08822184feea388f6b58160295e  #每月免费5h: 851a20680bb14607998ba2fe33af7e29、即用即付（）：f258c08822184feea388f6b58160295e
+  apiKey: 851a20680bb14607998ba2fe33af7e29  #每月免费5h
   region: eastasia

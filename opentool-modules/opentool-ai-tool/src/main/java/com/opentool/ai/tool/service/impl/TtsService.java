@@ -19,6 +19,7 @@ import com.opentool.common.core.utils.file.MultipartFileUtils;
 import com.opentool.system.api.RemoteFileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,6 +40,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class TtsService implements ITtsService {
+    @Value("${tts.apiKey}")
+    private String apiKey;
+
     @Autowired
     private TtsRoleMapper ttsRoleMapper;
     @Autowired
@@ -173,7 +177,7 @@ public class TtsService implements ITtsService {
      */
     public byte[] synthesize(String textToSynthesize, String outputFormat, String locale, String genderName, String voiceName, String style, double styleDegree, String styleRole, double rate, double pitch) throws Exception {
         TtsAuthentication auth = new TtsAuthentication();
-        String accessToken = auth.genAccessToken();
+        String accessToken = auth.genAccessToken(apiKey);
 
         HttpsURLConnection webRequest = HttpsConnection.getHttpsConnection(TtsConstant.TTS_SERVER_URI);
         webRequest.setDoInput(true);

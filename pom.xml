@@ -27,7 +27,7 @@
         <aliyun.oss.version>1.0.0</aliyun.oss.version>
         <aliyun.sdk.core.version>4.5.7</aliyun.sdk.core.version>
         <thumbnailator.version>0.4.19</thumbnailator.version>
-        <chatgpt.java.version>1.0.15</chatgpt.java.version>
+        <chatgpt.java.version>1.1.3</chatgpt.java.version>
         <microsoft.tts.version>1.32.1</microsoft.tts.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     </properties>

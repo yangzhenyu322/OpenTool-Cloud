@@ -21,7 +21,7 @@ import java.io.InputStreamReader;
 @Slf4j
 public class TtsAuthentication
 {
-    public String genAccessToken() {
+    public String genAccessToken(String apiKey) {
         InputStream inSt;
         HttpsURLConnection webRequest;
 
@@ -37,7 +37,7 @@ public class TtsAuthentication
 
                 byte[] bytes = new byte[0];
                 webRequest.setRequestProperty("content-length", String.valueOf(bytes.length));
-                webRequest.setRequestProperty("Ocp-Apim-Subscription-Key", TtsConstant.API_KEY);
+                webRequest.setRequestProperty("Ocp-Apim-Subscription-Key", apiKey);
                 webRequest.connect();
 
                 DataOutputStream dop = new DataOutputStream(webRequest.getOutputStream());

@@ -24,7 +24,6 @@ public class ChatGPTConfiguration {
     // 1.自定义代理服务
     @Value("${chatgpt.proxy.httpHost}")
     private String httpHost; // 自己的代理服务器IP
-
     @Value("${chatgpt.proxy.port}")
     private int proxyPort; // 自己代理服务端口
 
@@ -33,8 +32,10 @@ public class ChatGPTConfiguration {
     private String apiHost;
 
     // api key
-    @Value("${chatgpt.apiKey}")
-    private String apiKey;
+    @Value("${chatgpt.apiKey3_5}")
+    private String apiKey3_5;
+    @Value("${chatgpt.apiKey4}")
+    private String apiKey4;
     // 连接超时
     @Value("${chatgpt.timeout.connect}")
     private int connectTimeout;
@@ -63,9 +64,10 @@ public class ChatGPTConfiguration {
      * @return
      */
     @Bean
-    public OpenAiClient openAiClient() {
+    public OpenAiClient openAiClient3_5() {
+
         return OpenAiClient.builder()
-                .apiKey(Arrays.asList(apiKey))
+                .apiKey(Arrays.asList(apiKey3_5))
                 .keyStrategy(new KeyRandomStrategy())
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
                 .okHttpClient(okHttpClient())
@@ -79,10 +81,45 @@ public class ChatGPTConfiguration {
      * @return
      */
     @Bean
-    public OpenAiStreamClient openAiStreamClient(OkHttpClient okHttpClient) {
+    public OpenAiStreamClient openAiStreamClient3_5(OkHttpClient okHttpClient) {
+
         return OpenAiStreamClient.builder()
                 // apiKey
-                .apiKey(Arrays.asList(apiKey))
+                .apiKey(Arrays.asList(apiKey3_5))
+                // 自定义Key的获取策略：默认KeyRandomStrategy
+                .keyStrategy(new KeyRandomStrategy())
+                .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
+                .okHttpClient(okHttpClient)
+                // 自己做了dialing就传代理地址，没有可不传
+                .apiHost(apiHost)
+                .build();
+    }
+
+    /**
+     * 阻塞式传输
+     * @return
+     */
+    @Bean
+    public OpenAiClient openAiClient4() {
+        return OpenAiClient.builder()
+                .apiKey(Arrays.asList(apiKey4))
+                .keyStrategy(new KeyRandomStrategy())
+                .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
+                .okHttpClient(okHttpClient())
+                .apiHost(apiHost)
+                .build();
+    }
+
+    /**
+     * 流式传输
+     * @param okHttpClient
+     * @return
+     */
+    @Bean
+    public OpenAiStreamClient openAiStreamClient4(OkHttpClient okHttpClient) {
+        return OpenAiStreamClient.builder()
+                // apiKey
+                .apiKey(Arrays.asList(apiKey4))
                 // 自定义Key的获取策略：默认KeyRandomStrategy
                 .keyStrategy(new KeyRandomStrategy())
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())

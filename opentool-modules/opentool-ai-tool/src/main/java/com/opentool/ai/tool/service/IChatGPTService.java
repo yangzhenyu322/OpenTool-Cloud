@@ -7,7 +7,7 @@ import java.util.List;
  * / @Date: 2023/10/18 20:24
  */
 public interface IChatGPTService {
-    Long sseChat(String uid, String wid, String msg);
+    String sseChat(String uid, String wid, String model, String msg);
 
     List<String> getHistoryList(String uid, String wid);
 

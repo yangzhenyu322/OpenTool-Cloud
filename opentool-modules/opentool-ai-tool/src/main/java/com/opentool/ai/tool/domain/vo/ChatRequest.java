@@ -11,5 +11,6 @@ import lombok.Data;
 public class ChatRequest {
     private String uid; // user id
     private String wid; // window id
+    private String model; // chat model
     private String question;
 }

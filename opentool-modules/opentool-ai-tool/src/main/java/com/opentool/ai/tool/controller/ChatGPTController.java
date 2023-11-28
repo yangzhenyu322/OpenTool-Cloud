@@ -63,9 +63,9 @@ public class ChatGPTController {
      * @return tokens 问题的token长度
      */
     @PostMapping("/message")
-    public Long sseChat(@RequestBody ChatRequest chatRequest) {
-        log.info("[{}]-[{}]请求提问：[{}]",chatRequest.getUid(), chatRequest.getWid(), chatRequest.getQuestion());
-        return chatGPTService.sseChat(chatRequest.getUid(), chatRequest.getWid(), chatRequest.getQuestion());
+    public R<?> sseChat(@RequestBody ChatRequest chatRequest) {
+        log.info("[{}]-[{}]-[{}]请求提问：[{}]",chatRequest.getUid(), chatRequest.getWid(), chatRequest.getModel(), chatRequest.getQuestion());
+        return R.ok(chatGPTService.sseChat(chatRequest.getUid(), chatRequest.getWid(), chatRequest.getModel(), chatRequest.getQuestion()));
     }
 
     /**
@@ -130,13 +130,13 @@ public class ChatGPTController {
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
                 .addInterceptor(httpLoggingInterceptor) // 自定义日志
-                .connectTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-                .writeTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-                .readTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+                .connectTimeout(300, TimeUnit.SECONDS) // 自定义超时时间
+                .writeTimeout(300, TimeUnit.SECONDS) // 自定义超时时间
+                .readTimeout(300, TimeUnit.SECONDS) // 自定义超时时间
                 .build();
         OpenAiClient openAiClient = OpenAiClient.builder()
                 // apiKey
-                .apiKey(Arrays.asList("sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266"))
+                .apiKey(Arrays.asList("sk-GxoeUJ0L8vOjWRSP0eAbD53e4fA8436fB894Aa4c4f9f1220"))
                 // 自定义Key的获取策略：默认KeyRandomStrategy
                 .keyStrategy(new KeyRandomStrategy())
                 .okHttpClient(okHttpClient)
@@ -144,10 +144,12 @@ public class ChatGPTController {
                 .apiHost("https://api.qqslyx.com/")
                 .build();
 
-        // 聊天模型：gpt-3.5
-        Message message = Message.builder().role(Message.Role.USER).content("帮我写一首七字绝诗").build();
-        ChatCompletion chatCompletion = ChatCompletion.builder()
+        // 聊天
+        Message message = Message.builder().role(Message.Role.USER).content("以长沙的春天为题作画").build();
+        ChatCompletion chatCompletion = ChatCompletion
+                .builder()
                 .messages(Arrays.asList(message))
+                .model(ChatCompletion.Model.GPT_4_1106_PREVIEW.getName())
                 .build();
         ChatCompletionResponse chatCompletionResponse = openAiClient.chatCompletion(chatCompletion);  // 阻塞
 
