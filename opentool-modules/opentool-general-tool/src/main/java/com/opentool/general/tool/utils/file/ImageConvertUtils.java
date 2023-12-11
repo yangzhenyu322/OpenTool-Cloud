@@ -1,6 +1,5 @@
 package com.opentool.general.tool.utils.file;
 
-import com.opentool.common.core.utils.file.FileTypeUtils;
 import com.opentool.general.tool.domain.vo.ConvertConfigInfo;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FilenameUtils;
@@ -22,6 +21,7 @@ public class ImageConvertUtils {
 
     // 图像格式转换目标支持类型(包含小写)：JPG JPEG PNG GIF BMP WBMP
     private final static String[] IMG_SUPPORT_TYPE = {"jpg", "JPG", "jpeg","JPEG", "png", "PNG", "gif", "GIF", "bmp", "BMP", "wbmp", "WBMP"};
+    private final static String TEMP_FILE_PATH = "./temp/imageConvert/image/";
 
     /**
      * 图像格式转换
@@ -38,7 +38,7 @@ public class ImageConvertUtils {
             String baseName = FilenameUtils.getBaseName(imgName);
             urlList.add(new URL(urlStr));
             // 图片本地缓存地址
-            fileList.add(new File("F:\\图片\\opentool\\output\\convert\\" + baseName + "." + targetFormat.toLowerCase()));
+            fileList.add(new File(TEMP_FILE_PATH + baseName + "." + targetFormat.toLowerCase()));
         }
 
         if (Arrays.asList(IMG_SUPPORT_TYPE).contains(targetFormat)) { // 支持目标格式
@@ -115,20 +115,30 @@ public class ImageConvertUtils {
 
 
     /**
-     * 图像略缩图
-     * @param file 原图像
+     * 改变图片长宽
+     * @param urlStrList 原图像Url
      * @return
      * @throws IOException
      */
-    public static File imgConvertThumbnail(File file) throws IOException {
-        String baseName = FilenameUtils.getBaseName(file.getName());
-        File thumbnailFile = new File("F:\\图片\\opentool\\output\\thumbnail\\" + baseName + "." + FileTypeUtils.getFileType(file));
+    public static List<File> urlsSizeConvert(List<String> urlStrList, int width, int height) throws IOException {
+        List<File> fileList = new ArrayList<>();
+        List<URL> urlList = new ArrayList<>();
+        for (String urlStr :urlStrList) {
+            String imgName = urlStr.substring(urlStr.lastIndexOf("/") + 1); // 如 girl.jpg
+            String baseName = FilenameUtils.getBaseName(imgName);
+            String baseFormat = FilenameUtils.getExtension(imgName);
+            urlList.add(new URL(urlStr));
+            // 图片本地缓存地址
+            fileList.add(new File(TEMP_FILE_PATH + baseName + "." + baseFormat));
+        }
 
-        Thumbnails.of(file)
-                .size(100, 100)
-                .toFile(thumbnailFile);
 
-        return thumbnailFile;
+        Thumbnails.fromURLs(urlList)
+                .forceSize(width, height) // 不保证宽高比改变大小
+                .allowOverwrite(true)
+                .toFiles(fileList);
+
+        return fileList;
     }
 
     public static void main(String[] args) throws IOException, URISyntaxException {
@@ -141,7 +151,7 @@ public class ImageConvertUtils {
         Thumbnails.of("F:\\图片\\idea\\girl01.jpg")  // 支持本地图片、网络图片、File的来源
                 .scale(0.5D)  // 缩放大小：Double
                 .allowOverwrite(true)  // 允许覆盖已存在文件
-                .toFile("F:\\JavaProject\\file-save-path\\admin\\upload\\girl01-test.jpg");  // 保存至目标路径
+                .toFile(TEMP_FILE_PATH + "\\girl01-test.jpg");  // 保存至目标路径
 //
 //        // 网络图片
 //        File urlOutPutFile = new File("F:\\JavaProject\\file-save-path\\admin\\upload\\girl03.jpg");

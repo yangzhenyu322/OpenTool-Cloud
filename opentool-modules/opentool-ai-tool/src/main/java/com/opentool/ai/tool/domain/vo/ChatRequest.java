@@ -2,6 +2,8 @@ package com.opentool.ai.tool.domain.vo;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * chatgpt 请求参数对象
  * / @Author: ZenSheep
@@ -12,5 +14,6 @@ public class ChatRequest {
     private String uid; // user id
     private String wid; // window id
     private String model; // chat model
-    private String question;
+    private String question; // question text
+    private List<String> imgList; // question url list
 }

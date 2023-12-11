@@ -28,6 +28,14 @@ public class ImageConvertController {
         return R.ok(imageConvertService.uploadFile(file, "ImageConvert/images/origin"));
     }
 
+    /**
+     * 根据指定类型和格式转换图片
+     * @param urlsStrList
+     * @param targetFormat
+     * @param convertConfig
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/conversion")
     public R<?> convertFormat(
             @RequestParam("urlsStrList") List<String> urlsStrList,
@@ -36,5 +44,20 @@ public class ImageConvertController {
         // 将JSON对象反序列为ConvertConfigInfo对象
         ConvertConfigInfo convertConfigInfo = JSON.parseObject(convertConfig, ConvertConfigInfo.class);
         return R.ok(imageConvertService.urlsFormatConvert(urlsStrList, targetFormat, convertConfigInfo,"ImageConvert/images/convert"));
+    }
+
+    /**
+     * 根据指定长宽转换图片
+     * @param urlsStrList
+     * @param width
+     * @param height
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/conversion/size")
+    public List<String> convertSize(@RequestParam("urlsStrList") List<String> urlsStrList,
+                            @RequestParam("width") int width,
+                            @RequestParam("height") int height) throws IOException {
+        return imageConvertService.urlsSizeConvert(urlsStrList, width, height);
     }
 }

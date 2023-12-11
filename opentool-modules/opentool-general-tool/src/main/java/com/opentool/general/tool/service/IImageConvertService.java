@@ -15,4 +15,6 @@ public interface IImageConvertService {
     String uploadFile(MultipartFile file, String storagePath);
 
     List<String> urlsFormatConvert(List<String> urlsStrList, String targetFormat, ConvertConfigInfo convertConfigInfo, String storagePath) throws IOException;
+
+    List<String> urlsSizeConvert(List<String> urlsStrList, int width, int height) throws IOException;
 }

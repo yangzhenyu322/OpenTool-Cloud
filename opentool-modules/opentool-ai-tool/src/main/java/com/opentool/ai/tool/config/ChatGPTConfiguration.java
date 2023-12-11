@@ -65,7 +65,6 @@ public class ChatGPTConfiguration {
      */
     @Bean
     public OpenAiClient openAiClient3_5() {
-
         return OpenAiClient.builder()
                 .apiKey(Arrays.asList(apiKey3_5))
                 .keyStrategy(new KeyRandomStrategy())
@@ -90,7 +89,7 @@ public class ChatGPTConfiguration {
                 .keyStrategy(new KeyRandomStrategy())
                 .authInterceptor(new DynamicKeyOpenAiAuthInterceptor())
                 .okHttpClient(okHttpClient)
-                // 自己做了dialing就传代理地址，没有可不传
+                // 自己做了代理就传代理地址，没有可不传
                 .apiHost(apiHost)
                 .build();
     }
