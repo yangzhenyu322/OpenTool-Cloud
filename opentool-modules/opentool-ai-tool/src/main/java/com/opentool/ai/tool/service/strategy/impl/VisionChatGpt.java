@@ -71,6 +71,7 @@ public class VisionChatGpt implements IChatGptStrategy {
             chatLog.setWindowId(chatRequest.getWid());
             chatLog.setCreateTime(new Date());
             chatLog.setContent(null);
+            chatLog.setImageUrls(null);
             chatLog.setRule(rule);
             chatLog.setSummary("");
             chatLogMapper.insert(chatLog);

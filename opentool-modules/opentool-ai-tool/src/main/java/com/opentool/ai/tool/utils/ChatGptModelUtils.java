@@ -12,6 +12,8 @@ public class ChatGptModelUtils {
     private final static List<String> GPT3_5 = Arrays.asList("gpt-3.5-turbo-1106", "gpt-3.5-turbo-16k");
     // gpt4 模型列表
     private final static List<String> GPT4 = Arrays.asList("gpt-4-1106-preview", "gpt-4-vision-preview");
+    // dall 模型列表
+    private final static List<String> DALL = Arrays.asList("dall-e-3");
     // 纯文本模型列表
     private final static List<String> TEXT_GPT = Arrays.asList("gpt-3.5-turbo-1106", "gpt-3.5-turbo-16k", "gpt-4-1106-preview");
     // 文本及图片模型
@@ -33,6 +35,10 @@ public class ChatGptModelUtils {
         return VISION_GPT.contains(model);
     }
 
+    public static boolean isDall(String model) {
+        return DALL.contains(model);
+    }
+
     /**
      * 通过模型名返回所采用的gpt对话策略类型
      * @param model
@@ -43,6 +49,8 @@ public class ChatGptModelUtils {
             return "textChatGpt";
         } else if (isVisionGPT(model)) {
             return "visionChatGpt";
+        } else if (isDall(model)) {
+            return "toolCallDallGpt";
         }
         return null;
     }

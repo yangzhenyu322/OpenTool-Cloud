@@ -79,6 +79,7 @@ public class TextChatGpt implements IChatGptStrategy {
             chatLog.setWindowId(chatRequest.getWid());
             chatLog.setCreateTime(new Date());
             chatLog.setContent(null);
+            chatLog.setImageUrls(null);
             chatLog.setRule(rule);
             chatLog.setSummary("");
             chatLogMapper.insert(chatLog);
@@ -142,7 +143,6 @@ public class TextChatGpt implements IChatGptStrategy {
             } else if (ChatGptModelUtils.isGPT4(chatRequest.getModel())) {
                 openAiStreamClient4.streamChatCompletion(completion, openAiSseEventSourceListener);
             }
-
         } catch (BaseException e) {
             e.printStackTrace();
         }

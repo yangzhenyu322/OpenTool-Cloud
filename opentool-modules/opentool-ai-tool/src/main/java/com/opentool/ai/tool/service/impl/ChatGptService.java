@@ -24,7 +24,6 @@ public class ChatGptService implements IChatGptService {
      */
     @Autowired
     private Map<String, IChatGptStrategy> chatGPTStrategyMap;
-
     @Autowired
     private RemoteFileService remoteFileService;
     @Autowired

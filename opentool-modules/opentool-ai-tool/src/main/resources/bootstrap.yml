@@ -65,7 +65,7 @@ chatgpt:
   apiKey4: sk-GxoeUJ0L8vOjWRSP0eAbD53e4fA8436fB894Aa4c4f9f1220
 #  apiHost: https://vip.zzapi.life/
 #  apiKey3_5: sk-s7uphlJIyJJN9isi9aE17b57Eb604c6a8b957fEf2c8f0e54
-#  apiKey4: sk-F0TNLFt8lEUrLT7D7e00E17e453a48C5988f46763e5d2cC2
+#  apiKey4: sk-F0TNLFt8lEUrLT7D7e00E17e453a48C5988f46763e5d2cC2  # key：sk-JVjqTCDR9L7utVrr6c64FaA78eCf40F585B3F582Da4e275e、sk-F0TNLFt8lEUrLT7D7e00E17e453a48C5988f46763e5d2cC2
   proxy:
     httpHost: 127.0.0.1
     port: 7890

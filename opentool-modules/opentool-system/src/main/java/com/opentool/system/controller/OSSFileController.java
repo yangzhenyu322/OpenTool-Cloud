@@ -28,4 +28,6 @@ public class OSSFileController {
     public String uploadFile(@RequestPart("file") MultipartFile file, @RequestParam("storagePath") String storagePath) {
         return ossService.uploadFile(file, storagePath);
     }
+
+
 }

@@ -23,6 +23,7 @@ public class ChatLog {
     private Date createTime;
     @TableField(typeHandler = MyBatisTypeHandler.class)
     private String content;
+    private String imageUrls;
     private String rule;
     @TableField(typeHandler = MyBatisTypeHandler.class)
     private String summary;

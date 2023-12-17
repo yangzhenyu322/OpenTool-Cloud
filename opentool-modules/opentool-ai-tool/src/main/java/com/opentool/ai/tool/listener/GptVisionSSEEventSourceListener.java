@@ -24,7 +24,6 @@ import java.util.*;
  */
 @Slf4j
 public class GptVisionSSEEventSourceListener extends EventSourceListener {
-    private long tokens; // tokens数
     private String answer = ""; // 回答文本
     private SseEmitter sseEmitter; // sse连接
     private List<MessagePicture> messagePictures; // 存文本消息
@@ -42,7 +41,6 @@ public class GptVisionSSEEventSourceListener extends EventSourceListener {
     @Override
     public void onEvent(EventSource eventSource, String id, String type, String data) {
         log.info("OpenAI返回数据: {}", data);
-        tokens += 1;
         if (data.equals("[DONE]")) {
             log.info("OpenAI返回数据结束了");
             // 存储答案
@@ -55,11 +53,6 @@ public class GptVisionSSEEventSourceListener extends EventSourceListener {
             log.info("数据库持久化完成");
 
             Map<String, String> map = new HashMap<>();
-            map.put("tokens", String.valueOf(tokens()));
-            sseEmitter.send(SseEmitter.event()
-                    .id("[TOKENS]")
-                    .data(map)
-                    .reconnectTime(3000));
             map.put("down", "[DONE]");
             sseEmitter.send(SseEmitter.event()
                     .id("[DONE]")
@@ -74,14 +67,14 @@ public class GptVisionSSEEventSourceListener extends EventSourceListener {
         ObjectMapper mapper = new ObjectMapper();
         ChatCompletionResponse completionResponse = mapper.readValue(data, ChatCompletionResponse.class);
         try {
-            sseEmitter.send(SseEmitter.event()
-                    .id(completionResponse.getId())
-                    .data(completionResponse.getChoices().get(0).getDelta())
-                    .reconnectTime(3000));
-
             String curContent = completionResponse.getChoices().get(0).getDelta().getContent();
-            if (curContent != null) {  // 不能把curContent == "    "忽略，否则代码缩进没了
+            if (curContent != null && curContent.length() > 0) {  // 不能把curContent == "    "忽略，否则代码缩进没了
                 answer += curContent;
+                // 推送消息给客户端
+                sseEmitter.send(SseEmitter.event()
+                        .id(completionResponse.getId())
+                        .data(completionResponse.getChoices().get(0).getDelta())
+                        .reconnectTime(3000));
             }
         } catch (Exception e) {
             log.error("sse信息推送失败！");
@@ -92,7 +85,6 @@ public class GptVisionSSEEventSourceListener extends EventSourceListener {
 
     @Override
     public void onClosed(EventSource eventSource) {
-        log.info("流式输出返回值总共{}tokens", tokens() - 2);
         log.info("OpenAI关闭sse连接...");
     }
 
@@ -109,9 +101,5 @@ public class GptVisionSSEEventSourceListener extends EventSourceListener {
             log.error("OpenAI  sse连接异常data：{}，异常：{}", response, t);
         }
         eventSource.cancel();
-    }
-
-    public long tokens() {
-        return tokens;
     }
 }
