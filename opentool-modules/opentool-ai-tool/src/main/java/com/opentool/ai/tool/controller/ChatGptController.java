@@ -5,9 +5,17 @@ import com.opentool.ai.tool.service.IChatGptService;
 import com.opentool.ai.tool.service.ISseService;
 import com.opentool.ai.tool.utils.ChatGptModelUtils;
 import com.opentool.common.core.domain.R;
+import com.unfbx.chatgpt.OpenAiStreamClient;
+import com.unfbx.chatgpt.entity.chat.ChatCompletion;
+import com.unfbx.chatgpt.entity.chat.Message;
+import com.unfbx.chatgpt.function.KeyRandomStrategy;
+import com.unfbx.chatgpt.interceptor.OpenAILogger;
+import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +26,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * chat接口类
@@ -86,44 +96,44 @@ public class ChatGptController {
     }
 
     public static void main(String[] args) throws URISyntaxException, IOException {
-//        // 一、流式对话
-//        // 不要在生产或测试环境打开BODY级别的日志！！！
-//        // 生产或测试环境建议设置这三种级别：NONE,BASIC,HEADERS !!!
-//        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
-//        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-//        OkHttpClient okHttpClient = new OkHttpClient
-//                .Builder()
-//                .addInterceptor(httpLoggingInterceptor) // 自定义日志
-//                .connectTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-//                .writeTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-//                .readTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-//                .build();
-//        OpenAiStreamClient client = OpenAiStreamClient.builder()
-//                // apiKey
-//                .apiKey(Arrays.asList("sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266"))
-//                // 自定义Key的获取策略：默认KeyRandomStrategy
-//                .keyStrategy(new KeyRandomStrategy())
-//                .okHttpClient(okHttpClient)
-//                // 自己做了代理就传代理地址，没有可不传
-//                .apiHost("https://api.qqslyx.com/")
-//                .build();
-//
-//        // 聊天模型：gpt-3.5
-//        ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
-//        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴").build();
-//        ChatCompletion chatCompletion = ChatCompletion.builder()
-//                .messages(Arrays.asList(message))
-//                .build();
-//
-//        // CountDownLatch 的核心思想是，你可以创建一个 CountDownLatch 对象，初始化它的计数值，然后在多个线程中调用 countDown() 方法来递减计数值，最后一个完成的线程会触发等待的线程继续执行。
-//        CountDownLatch latch = new CountDownLatch(1);
-//        client.streamChatCompletion(chatCompletion,eventSourceListener);
-//
-//        try {
-//            latch.await();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        // 一、流式对话
+        // 不要在生产或测试环境打开BODY级别的日志！！！
+        // 生产或测试环境建议设置这三种级别：NONE,BASIC,HEADERS !!!
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder()
+                .addInterceptor(httpLoggingInterceptor) // 自定义日志
+                .connectTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+                .writeTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+                .readTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+                .build();
+        OpenAiStreamClient client = OpenAiStreamClient.builder()
+                // apiKey
+                .apiKey(Arrays.asList("sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266"))
+                // 自定义Key的获取策略：默认KeyRandomStrategy
+                .keyStrategy(new KeyRandomStrategy())
+                .okHttpClient(okHttpClient)
+                // 自己做了代理就传代理地址，没有可不传
+                .apiHost("https://api.qqslyx.com/")
+                .build();
+
+        // 聊天模型：gpt-3.5
+        ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
+        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴").build();
+        ChatCompletion chatCompletion = ChatCompletion.builder()
+                .messages(Arrays.asList(message))
+                .build();
+
+        // CountDownLatch 的核心思想是，你可以创建一个 CountDownLatch 对象，初始化它的计数值，然后在多个线程中调用 countDown() 方法来递减计数值，最后一个完成的线程会触发等待的线程继续执行。
+        CountDownLatch latch = new CountDownLatch(1);
+        client.streamChatCompletion(chatCompletion,eventSourceListener);
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         // 2、阻塞式对话
 //        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
@@ -243,7 +253,7 @@ public class ChatGptController {
 //        Content textContent = Content.builder().text("What’s in this image?").type(Content.Type.TEXT.getName()).build();
 //        ImageUrl imageUrl = ImageUrl
 //                .builder()
-//                .url("https://opentool.oss-cn-shenzhen.aliyuncs.com/ImageConvert/images/origin/8de68c44-61b3-4418-b020-0c4c843bc5ed/girl05.jpg")
+//                .url("https://opentool.oss-cn-shenzhen.aliyuncs.com/ChatGpt/image/3dead68b-f7df-4707-bbfc-b53a2270c53b/girl03.jpg")
 //                .build();
 //        Content imageContent = Content.builder().imageUrl(imageUrl).type(Content.Type.IMAGE_URL.getName()).build();
 //        List<Content> contentList = new ArrayList<>();

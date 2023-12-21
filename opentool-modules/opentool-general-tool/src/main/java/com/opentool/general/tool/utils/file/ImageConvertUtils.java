@@ -1,5 +1,6 @@
 package com.opentool.general.tool.utils.file;
 
+import com.opentool.common.core.utils.file.FileUtils;
 import com.opentool.general.tool.domain.vo.ConvertConfigInfo;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FilenameUtils;
@@ -31,13 +32,21 @@ public class ImageConvertUtils {
      * @throws IOException
      */
     public static List<File> urlsFormatConvert(List<String> urlStrList, String targetFormat, ConvertConfigInfo convertConfigInfo) throws IOException {
-        List<File> fileList = new ArrayList<>();
-        List<URL> urlList = new ArrayList<>();
+        List<File> fileList = new ArrayList<>(); // 图片本地缓存地址
+        List<URL> urlList = new ArrayList<>(); // URL对象List
+
+        List<String> fileNameList = new ArrayList<>(); // 文件名列表
         for (String urlStr :urlStrList) {
-            String imgName = urlStr.substring(urlStr.lastIndexOf("/") + 1); // 如 girl.jpg
-            String baseName = FilenameUtils.getBaseName(imgName);
             urlList.add(new URL(urlStr));
-            // 图片本地缓存地址
+
+            String imgName = urlStr.substring(urlStr.lastIndexOf("/") + 1); // 如 girl.jpg
+            fileNameList.add(imgName);
+        }
+
+        // 文件名重复检测
+        fileNameList = Arrays.asList(FileUtils.getUniFileNames(fileNameList.toArray(new String[0])));
+        for (String fileName : fileNameList) {
+            String baseName = FilenameUtils.getBaseName(fileName);
             fileList.add(new File(TEMP_FILE_PATH + baseName + "." + targetFormat.toLowerCase()));
         }
 

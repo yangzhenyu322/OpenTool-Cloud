@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 文件处理工具类
@@ -81,6 +83,60 @@ public class FileUtils {
             log.error("本地文件删除失败");
         }
         return flag;
+    }
+
+
+    /**
+     * 保证文件名唯一
+     * @param names 一般文件名：girl.png
+     * @return
+     */
+    public static String[] getUniFileNames(String[] names) {
+        int n = names.length;
+
+        String[] baseNames = new String[n];
+        String[] suffixTypes = new String[n];
+        for (int i = 0; i < n; i++) {
+            int lastDotIndex = names[i].lastIndexOf(".");
+            baseNames[i] = names[i].substring(0, lastDotIndex);
+            suffixTypes[i] = names[i].substring(lastDotIndex);
+        }
+
+        Map<String, Integer> index = new HashMap<String, Integer>();
+
+        String[] res = new String[n];
+        for (int i = 0; i < n; i++) {
+            String name = baseNames[i];
+            if (!index.containsKey(name)) {
+                res[i] = name;
+                index.put(name, 1);
+            } else {
+                int k = index.get(name);
+                while (index.containsKey(addSuffix(name, k))) {
+                    k++;
+                }
+                res[i] = addSuffix(name, k);
+                index.put(name, k + 1);
+                index.put(addSuffix(name, k), 1);
+            }
+        }
+
+        // 对新文件列表添加文件类型后缀
+        for (int i = 0; i < n; i++) {
+            res[i] += suffixTypes[i];
+        }
+
+        return res;
+    }
+
+    /**
+     * 添加括号后缀
+     * @param name
+     * @param k
+     * @return
+     */
+    public static String addSuffix(String name, int k) {
+        return name + "(" + k + ")";
     }
 
 //    // 斜杠

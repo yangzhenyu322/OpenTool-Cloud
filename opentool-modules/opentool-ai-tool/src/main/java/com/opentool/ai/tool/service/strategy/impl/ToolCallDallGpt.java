@@ -109,16 +109,6 @@ public class ToolCallDallGpt implements IChatGptStrategy {
             imageUrlsList = convertToListOfLists(imageUrlsListContext);
             // 取出最近5个对话
             if (messages.size() >= 5 * 2) {
-//                for (int i = messages.size() - 5 * 2; i < messages.size(); i++) {
-//                    // 修改tempMessage的内容，与image list拼接
-//                    Message tempMessage = messages.get(i);
-//                    String tempImageUris = "";
-//                    for (String url:imageUrlsList.get(i)) {
-//                        tempImageUris += "url:" + url + ";";
-//                    }
-//                    tempMessage.setContent(tempImageUris + "\n" + tempMessage.getContent());
-//                    chatMessages.add(tempMessage);
-//                }
                 chatMessages = new ArrayList<>(messages.subList(messages.size() - 5 * 2, messages.size()));
                 // 联系上下文
                 if (StrUtil.isNotBlank(summary)) {
@@ -128,22 +118,12 @@ public class ToolCallDallGpt implements IChatGptStrategy {
                 if (messages.size() % 5 == 0) {
                     // 历史对话为5的倍数，开始进行总结
                     log.info("历史对话为5的倍数，开始进行上下文总结");
-                    summary = summaryHistoryMessages(chatMessages, chatRequest.getModel());
+                    summary = summaryHistoryMessages(chatMessages);
                     log.info("总结完成，持久化summary");
                     chatLog.setSummary(summary);
                     chatLogMapper.updateById(chatLog);
                 }
             } else {
-//                for (int i = 0; i < messages.size(); i++) {
-//                    // 修改tempMessage的内容，与image list拼接
-//                    Message tempMessage = messages.get(i);
-//                    String tempImageUris = "";
-//                    for (String url:imageUrlsList.get(i)) {
-//                        tempImageUris += "url:" + url + ";";
-//                    }
-//                    tempMessage.setContent(tempImageUris + "\n" + tempMessage.getContent());
-//                    chatMessages.add(tempMessage);
-//                }
                 chatMessages.addAll(messages);
             }
         }
@@ -208,7 +188,6 @@ public class ToolCallDallGpt implements IChatGptStrategy {
             String genImageUrl = genImage(imageParam, chatRequest.getModel(), 1, Image.Quality.HD.getName(), SizeEnum.size_1024.getName(), Image.Style.NATURAL.getName());
             log.info("生成图像Url:" + genImageUrl);
             // url转本地文件
-            System.out.println("imageName:" + imageParam.getImageName());
             String tempPathName = FileUtils.urlToFilePath(genImageUrl, imageParam.getImageName() + ".png");
             File tempFile = FileUtils.filePathToFile(tempPathName);
             // oss存储：持久化文件，否则过一段时间openAi会删除该文件导致文件无法找到
@@ -255,7 +234,7 @@ public class ToolCallDallGpt implements IChatGptStrategy {
      * @param chatMessages 需要总结的上下文
      * @return 总结文本
      */
-    public String summaryHistoryMessages(List<Message> chatMessages, String model) {
+    public String summaryHistoryMessages(List<Message> chatMessages) {
         // 满足要求，开始总结
         String summary;
         chatMessages.add(Message.builder().content(rule).role(Message.Role.USER).build());  // 添加总结规则
@@ -263,7 +242,7 @@ public class ToolCallDallGpt implements IChatGptStrategy {
         ChatCompletion chatCompletion = ChatCompletion
                 .builder()
                 .messages(chatMessages)
-                .model(model)
+                .model(ChatCompletion.Model.GPT_3_5_TURBO_1106.getName())
                 .build();
         // 开始阻塞
         ChatCompletionResponse chatCompletionResponse = null;
@@ -355,12 +334,6 @@ public class ToolCallDallGpt implements IChatGptStrategy {
                 dialogContent.setImageUrlList(imageUrlList.get(i));
                 dialogContentList.add(dialogContent);
             }
-//            for (Message message: messages) {
-//                DialogContent dialogContent = new DialogContent();
-//                // 只有文本
-//                dialogContent.setText(message.getContent());
-//                dialogContentList.add(dialogContent);
-//            }
             return dialogContentList;
         }
 
