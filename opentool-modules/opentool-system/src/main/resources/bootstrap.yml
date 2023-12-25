@@ -2,9 +2,6 @@
 server:
   port: 8083
 
-file-server:
-  root-path: F:\JavaProject\file-save-path\
-
 # Spring
 spring:
   datasource:
@@ -44,6 +41,9 @@ mybatis-plus:
     map-underscore-to-camel-case: true
   # 指定类型别名的包路径
   type-aliases-package: com.opentool.system.domain.entity
+
+file-server:
+  root-path: ./temp/localFile/
 
 # AliYun-OSS
 aliyun:

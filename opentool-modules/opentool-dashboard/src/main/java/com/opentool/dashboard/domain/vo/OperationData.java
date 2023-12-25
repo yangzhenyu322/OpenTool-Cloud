@@ -4,7 +4,7 @@ import lombok.Data;
 
 
 /**
- * 数据分析控制器
+ * 网站运营数据类
  *
  * @author ZenSheep
  * @date 2023/07/09

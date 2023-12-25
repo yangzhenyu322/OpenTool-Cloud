@@ -21,7 +21,7 @@ import java.io.StringWriter;
 
 
 /**
- * SSML类：用于调整合成语言风格
+ * SSML类：用于tts调整合成语言风格
  * 配置参考：https://learn.microsoft.com/zh-cn/azure/ai-services/speech-service/speech-synthesis-markup-voice
  */
 public class XmlDom {

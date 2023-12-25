@@ -43,7 +43,7 @@ public class ImageConvertController {
             @RequestParam("convertConfig") String convertConfig) throws IOException {
         // 将JSON对象反序列为ConvertConfigInfo对象
         ConvertConfigInfo convertConfigInfo = JSON.parseObject(convertConfig, ConvertConfigInfo.class);
-        return R.ok(imageConvertService.urlsFormatConvert(urlsStrList, targetFormat, convertConfigInfo,"ImageConvert/images/convert"));
+        return R.ok(imageConvertService.urlsFormatConvert(urlsStrList, targetFormat, convertConfigInfo));
     }
 
     /**

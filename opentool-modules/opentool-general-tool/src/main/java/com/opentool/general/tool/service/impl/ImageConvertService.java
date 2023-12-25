@@ -1,5 +1,6 @@
 package com.opentool.general.tool.service.impl;
 
+import com.opentool.common.core.utils.file.FileUtils;
 import com.opentool.common.core.utils.file.MultipartFileUtils;
 import com.opentool.general.tool.domain.vo.ConvertConfigInfo;
 import com.opentool.general.tool.service.IImageConvertService;
@@ -32,19 +33,15 @@ public class ImageConvertService implements IImageConvertService {
     }
 
     @Override
-    public List<String> urlsFormatConvert(List<String> urlsStrList, String targetFormat, ConvertConfigInfo convertConfigInfo, String storagePath) throws IOException {
+    public List<String> urlsFormatConvert(List<String> urlsStrList, String targetFormat, ConvertConfigInfo convertConfigInfo) throws IOException {
         List<String> urlsTargetPath = new ArrayList<>();
         List<File> fileList = ImageConvertUtils.urlsFormatConvert(urlsStrList, targetFormat, convertConfigInfo);
 
         for (File file:fileList) {
             MultipartFile multipartFile = MultipartFileUtils.fileToMultipartFile(file);
-            urlsTargetPath.add(remoteFileService.uploadFile(multipartFile, storagePath));
+            urlsTargetPath.add(remoteFileService.uploadFile(multipartFile, "ImageConvert/images/convert"));
             // 删除缓存本地文件
-            if (file.delete()) {
-                log.info(file + ":本地缓存文件删除成功");
-            } else {
-                log.info(file + ":本地缓存文件删除失败");
-            }
+            FileUtils.deleteFile(file);
         }
 
         return urlsTargetPath;
@@ -59,11 +56,7 @@ public class ImageConvertService implements IImageConvertService {
             MultipartFile multipartFile = MultipartFileUtils.fileToMultipartFile(file);
             urlsTargetPath.add(remoteFileService.uploadFile(multipartFile, "ImageConvert/images/convert"));
             // 删除缓存本地文件
-            if (file.delete()) {
-                log.info(file + ":本地缓存文件删除成功");
-            } else {
-                log.info(file + ":本地缓存文件删除失败");
-            }
+            FileUtils.deleteFile(file);
         }
 
         return urlsTargetPath;

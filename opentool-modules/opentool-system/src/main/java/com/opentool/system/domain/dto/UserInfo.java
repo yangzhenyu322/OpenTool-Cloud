@@ -1,4 +1,4 @@
-package com.opentool.system.domain.vo;
+package com.opentool.system.domain.dto;
 
 import com.opentool.common.core.enums.UserRole;
 import com.opentool.common.core.enums.UserSex;

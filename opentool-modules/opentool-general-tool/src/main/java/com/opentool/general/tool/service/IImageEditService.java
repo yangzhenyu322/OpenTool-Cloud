@@ -8,5 +8,5 @@ import org.springframework.web.multipart.MultipartFile;
  * / @Date: 2023/8/23 17:40
  */
 public interface IImageEditService {
-    String uploadFile(MultipartFile file, String storagePath);
+    String uploadFile(MultipartFile file);
 }

@@ -34,12 +34,6 @@
             <artifactId>aliyun-oss-spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- chatgpt-java -->
-        <dependency>
-            <groupId>com.unfbx</groupId>
-            <artifactId>chatgpt-java</artifactId>
-        </dependency>
-
         <!-- junit-test -->
         <dependency>
             <groupId>junit</groupId>

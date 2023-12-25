@@ -24,6 +24,6 @@ public class ImageEditController {
 
     @PostMapping("/upload")
     public R<?> uploadImage(@RequestPart("file")MultipartFile file) {
-        return R.ok(imageEditService.uploadFile(file, "imageEdit/images/origin"));
+        return R.ok(imageEditService.uploadFile(file));
     }
 }

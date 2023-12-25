@@ -194,7 +194,7 @@ public class ToolCallDallGpt implements IChatGptStrategy {
             String url = remoteFileService.uploadFile(MultipartFileUtils.fileToMultipartFile(tempFile), "ChatGpt/image");
             log.info("oss存储图像Url:" + url);
             // 删除本地缓存文件
-            FileUtils.deleteFile(tempPathName);
+            FileUtils.deleteFile(tempFile);
             List<String> imageUrls = new ArrayList<>();
             imageUrls.add(url);
 

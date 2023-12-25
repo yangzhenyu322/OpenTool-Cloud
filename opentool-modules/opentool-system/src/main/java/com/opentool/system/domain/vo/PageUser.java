@@ -1,7 +1,7 @@
-package com.opentool.system.domain.dto;
+package com.opentool.system.domain.vo;
 
 import com.opentool.system.api.domain.User;
-import com.opentool.system.domain.vo.UserInfo;
+import com.opentool.system.domain.dto.UserInfo;
 import lombok.Data;
 
 import java.util.List;

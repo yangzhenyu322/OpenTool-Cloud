@@ -17,7 +17,7 @@ public class ImageEditService implements IImageEditService {
     private RemoteFileService remoteFileService;
 
     @Override
-    public String uploadFile(MultipartFile file, String storagePath) {
-        return remoteFileService.uploadFile(file, storagePath);
+    public String uploadFile(MultipartFile file) {
+        return remoteFileService.uploadFile(file, "ImageEdit/images/origin");
     }
 }
