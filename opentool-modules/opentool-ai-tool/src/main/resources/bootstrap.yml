@@ -47,6 +47,13 @@ opentool-system:
     # 负载均衡规则
     NFLoadBalancerRuleClassName: com.alibaba.cloud.nacos.ribbon.NacosRule
 
+# 子模块下的声明式接口包 日志级别必须是debug ,不然不打印日志
+logging:
+  level:
+    com:
+      opentool:
+        system:
+          api: debug
 # Feign
 feign:
   client:

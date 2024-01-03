@@ -1,5 +1,6 @@
 package com.opentool.system.api;
 
+import com.opentool.system.api.config.DefaultFeignConfiguration;
 import com.opentool.system.api.domain.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,7 @@ import java.util.Map;
  * / @Author: ZenSheep
  * / @Date: 2023/7/25 10:26
  */
-@FeignClient(name = "opentool-system", contextId="remote-user")
+@FeignClient(name = "opentool-system", contextId="remote-user", configuration = DefaultFeignConfiguration.class)
 public interface RemoteUserService {
     /**
      * 查询用户列表

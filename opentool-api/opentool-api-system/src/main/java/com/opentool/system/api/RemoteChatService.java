@@ -1,5 +1,6 @@
 package com.opentool.system.api;
 
+import com.opentool.system.api.config.DefaultFeignConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -9,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  * / @Author: ZenSheep
  * / @Date: 2023/10/24 20:55
  */
-@FeignClient(name = "opentool-ai-tool", contextId = "remote-chat")
+@FeignClient(name = "opentool-ai-tool", contextId = "remote-chat", configuration = DefaultFeignConfiguration.class)
 public interface RemoteChatService {
     @GetMapping("/chat/createSse/{uid}")
     SseEmitter createSseConnect(@PathVariable("uid") String uid);

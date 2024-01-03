@@ -21,6 +21,12 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+        <!--httpClient的依赖: 使用连接池代替默认的URL Connection提高feign性能 -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-httpclient</artifactId>
+        </dependency>
+
         <!--  Spring Cloud LoadBalancer  -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
