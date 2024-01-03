@@ -5,12 +5,13 @@ import com.opentool.ai.tool.service.IChatGptService;
 import com.opentool.ai.tool.service.ISseService;
 import com.opentool.ai.tool.utils.ChatGptModelUtils;
 import com.opentool.common.core.domain.R;
-import com.unfbx.chatgpt.OpenAiStreamClient;
-import com.unfbx.chatgpt.entity.chat.ChatCompletion;
-import com.unfbx.chatgpt.entity.chat.Message;
-import com.unfbx.chatgpt.function.KeyRandomStrategy;
+import com.unfbx.chatgpt.OpenAiClient;
+import com.unfbx.chatgpt.entity.images.Image;
+import com.unfbx.chatgpt.entity.images.ImageResponse;
+import com.unfbx.chatgpt.entity.images.ResponseFormat;
+import com.unfbx.chatgpt.entity.images.SizeEnum;
 import com.unfbx.chatgpt.interceptor.OpenAILogger;
-import com.unfbx.chatgpt.sse.ConsoleEventSourceListener;
+import com.unfbx.chatgpt.interceptor.OpenAiResponseInterceptor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -99,41 +99,41 @@ public class ChatGptController {
         // 一、流式对话
         // 不要在生产或测试环境打开BODY级别的日志！！！
         // 生产或测试环境建议设置这三种级别：NONE,BASIC,HEADERS !!!
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-        OkHttpClient okHttpClient = new OkHttpClient
-                .Builder()
-                .addInterceptor(httpLoggingInterceptor) // 自定义日志
-                .connectTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-                .writeTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-                .readTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-                .build();
-        OpenAiStreamClient client = OpenAiStreamClient.builder()
-                // apiKey
-                .apiKey(Arrays.asList("sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266"))
-                // 自定义Key的获取策略：默认KeyRandomStrategy
-                .keyStrategy(new KeyRandomStrategy())
-                .okHttpClient(okHttpClient)
-                // 自己做了代理就传代理地址，没有可不传
-                .apiHost("https://api.qqslyx.com/")
-                .build();
-
-        // 聊天模型：gpt-3.5
-        ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
-        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴").build();
-        ChatCompletion chatCompletion = ChatCompletion.builder()
-                .messages(Arrays.asList(message))
-                .build();
-
-        // CountDownLatch 的核心思想是，你可以创建一个 CountDownLatch 对象，初始化它的计数值，然后在多个线程中调用 countDown() 方法来递减计数值，最后一个完成的线程会触发等待的线程继续执行。
-        CountDownLatch latch = new CountDownLatch(1);
-        client.streamChatCompletion(chatCompletion,eventSourceListener);
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
+//        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+//        OkHttpClient okHttpClient = new OkHttpClient
+//                .Builder()
+//                .addInterceptor(httpLoggingInterceptor) // 自定义日志
+//                .connectTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+//                .writeTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+//                .readTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+//                .build();
+//        OpenAiStreamClient client = OpenAiStreamClient.builder()
+//                // apiKey
+//                .apiKey(Arrays.asList("sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266"))
+//                // 自定义Key的获取策略：默认KeyRandomStrategy
+//                .keyStrategy(new KeyRandomStrategy())
+//                .okHttpClient(okHttpClient)
+//                // 自己做了代理就传代理地址，没有可不传
+//                .apiHost("https://api.qqslyx.com/")
+//                .build();
+//
+//        // 聊天模型：gpt-3.5
+//        ConsoleEventSourceListener eventSourceListener = new ConsoleEventSourceListener();
+//        Message message = Message.builder().role(Message.Role.USER).content("你好啊我的伙伴").build();
+//        ChatCompletion chatCompletion = ChatCompletion.builder()
+//                .messages(Arrays.asList(message))
+//                .build();
+//
+//        // CountDownLatch 的核心思想是，你可以创建一个 CountDownLatch 对象，初始化它的计数值，然后在多个线程中调用 countDown() 方法来递减计数值，最后一个完成的线程会触发等待的线程继续执行。
+//        CountDownLatch latch = new CountDownLatch(1);
+//        client.streamChatCompletion(chatCompletion,eventSourceListener);
+//
+//        try {
+//            latch.await();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         // 2、阻塞式对话
 //        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
@@ -269,33 +269,33 @@ public class ChatGptController {
 //        chatCompletionResponse.getChoices().forEach(e -> System.out.println(e.getMessage()));
 
         // 5、Dall-e-3生成图片
-//        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
-//        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-//        OkHttpClient okHttpClient = new OkHttpClient
-//                .Builder()
-//                .addInterceptor(httpLoggingInterceptor) // 自定义日志
-//                .addInterceptor(new OpenAiResponseInterceptor())
-//                .connectTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-//                .writeTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-//                .readTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
-//                .build();
-//        OpenAiClient client = OpenAiClient.builder()
-//                .apiKey(Arrays.asList("sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266")) // 3.5和4的key都能调用
-//                .okHttpClient(okHttpClient)
-//                .apiHost("https://api.qqslyx.com/")
-//                .build();
-//
-//        Image image = Image.builder()
-//                .responseFormat(ResponseFormat.URL.getName())
-//                .model(Image.Model.DALL_E_3.getName())
-//                .prompt("A photograph of a black bird.")
-//                .n(1)
-//                .quality(Image.Quality.HD.getName())
-//                .size(SizeEnum.size_1024.getName())
-//                .style(Image.Style.NATURAL.getName())
-//                .build();
-//        ImageResponse imageResponse = client.genImages(image);
-//        System.out.println("生成图片：" + imageResponse.getData().get(0).getUrl());
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new OpenAILogger());
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder()
+                .addInterceptor(httpLoggingInterceptor) // 自定义日志
+                .addInterceptor(new OpenAiResponseInterceptor())
+                .connectTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+                .writeTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+                .readTimeout(30, TimeUnit.SECONDS) // 自定义超时时间
+                .build();
+        OpenAiClient client = OpenAiClient.builder()
+                .apiKey(Arrays.asList("sk-GxoeUJ0L8vOjWRSP0eAbD53e4fA8436fB894Aa4c4f9f1220")) // 3.5和4的key都能调用
+                .okHttpClient(okHttpClient)
+                .apiHost("https://api.qqslyx.com/")
+                .build();
+
+        Image image = Image.builder()
+                .responseFormat(ResponseFormat.URL.getName())
+                .model(Image.Model.DALL_E_3.getName())
+                .prompt("A photograph of a black bird.")
+                .n(1)
+                .quality(Image.Quality.HD.getName())
+                .size(SizeEnum.size_1024.getName())
+                .style(Image.Style.NATURAL.getName())
+                .build();
+        ImageResponse imageResponse = client.genImages(image);
+        System.out.println("生成图片：" + imageResponse.getData().get(0).getUrl());
 
 //        // 编辑图像
 //        String url = imageResponse.getData().get(0).getUrl();

@@ -20,6 +20,6 @@
             <groupId>com.opentool</groupId>
             <artifactId>opentool-common-core</artifactId>
         </dependency>
-    </dependencies>
 
+    </dependencies>
 </project>

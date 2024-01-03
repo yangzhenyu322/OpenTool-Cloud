@@ -24,19 +24,27 @@ spring:
         - id: opentool-system # 路由id
           uri: lb://opentool-system # 路由的目标地址 lb就是负载均衡，后面跟服务名称
           predicates:
-            - Path=/user/**, /file/**, /oss/** # 按照路径匹配
+            - Path=/api/v1/user/**, /api/v1/auth/**, /api/v1/file/**, /api/v1/oss/** # 按照路径匹配
+          filters:
+            - StripPrefix=2 # 去除前 n 个请求路径前缀
         - id: opentool-dashboard
           uri: lb://opentool-dashboard
           predicates:
-            - Path=/data-analysis/**,/workbench/**
+            - Path=/api/v1/data-analysis/**, /api/v1/workbench/**
+          filters:
+            - StripPrefix=2
         - id: opentool-general-tool
           uri: lb://opentool-general-tool
           predicates:
-            - Path=/imageConvert/**,/imageEdit/**
+            - Path=/api/v1/imageConvert/**, /api/v1/imageEdit/**
+          filters:
+            - StripPrefix=2
         - id: opentool-ai-tool
           uri: lb://opentool-ai-tool
           predicates:
-            - Path=/chatgpt/**, /tts/**, /stt/**
+            - Path=/api/v1/chatgpt/**, /api/v1/tts/**, /api/v1/stt/**
+          filters:
+            - StripPrefix=2
       globalcors: # 全局的跨域请求
         add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
         cors-configurations:

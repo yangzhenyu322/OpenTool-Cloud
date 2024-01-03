@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import java.lang.annotation.*;
 
 /**
- * 自定义feign注解
+ * 自定义feign注解: Enable OpenTool Feign Client
  * 添加basePackages路径
  * / @Author: ZenSheep
  * / @Date: 2023/7/24 21:56

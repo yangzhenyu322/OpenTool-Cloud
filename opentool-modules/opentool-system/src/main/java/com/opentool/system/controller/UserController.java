@@ -29,6 +29,16 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
+    @GetMapping("/a")
+    public String a() {
+        return "user center ok a";
+    }
+
+    @GetMapping("/b")
+    public String b() {
+        return "user center ok b";
+    }
+
     /**
      * IP定位API（腾讯位置服务，第三方）：https://lbs.qq.com/service/webService/webServiceGuide/webServiceIp
      * @param userIP
