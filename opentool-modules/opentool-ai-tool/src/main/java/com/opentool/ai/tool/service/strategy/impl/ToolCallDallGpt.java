@@ -52,6 +52,11 @@ public class ToolCallDallGpt implements IChatGptStrategy {
     @Autowired
     private OpenAiClient openAiClient3_5; // 阻塞对话：用于总结历史对话
     @Autowired
+    private OpenAiStreamClient openAiStreamClient4;
+    @Autowired
+    private OpenAiClient openAiClient4;
+
+    @Autowired
     private ChatLogMapper chatLogMapper;
     @Value("${chatgpt.summary.rule}")
     private String rule;

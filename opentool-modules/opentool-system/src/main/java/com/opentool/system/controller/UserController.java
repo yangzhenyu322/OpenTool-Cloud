@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.opentool.common.core.domain.R;
-import com.opentool.system.api.domain.User;
+import com.opentool.system.api.domain.SysUser;
 import com.opentool.system.domain.vo.PageUser;
 import com.opentool.system.domain.dto.UserInfo;
 import com.opentool.system.service.IUserService;
@@ -29,14 +29,14 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @GetMapping("/a")
-    public String a() {
-        return "user center ok a";
+    @GetMapping("/normal")
+    public R<?> normal() {
+        return R.ok("normal");
     }
 
-    @GetMapping("/b")
-    public String b() {
-        return "user center ok b";
+    @GetMapping("/admin")
+    public R<?> admin() {
+        return R.ok("admin");
     }
 
     /**
@@ -83,7 +83,7 @@ public class UserController {
             @PathVariable("page") Integer page,
             @PathVariable("size") Integer size
     ) {
-        Page<User> result = userService.page(new Page<>(page, size));
+        Page<SysUser> result = userService.page(new Page<>(page, size));
         return new PageUser(result.getTotal(), result.getRecords());
     }
 
@@ -129,8 +129,13 @@ public class UserController {
      * @return
      */
     @GetMapping("/lists")
-    public List<User> getUserList() {
+    public List<SysUser> getUserList() {
         return userService.queryUserList();
+    }
+
+    @GetMapping("/username/{username}")
+    public SysUser findUserByUserName(@PathVariable("username") String username) {
+        return userService.findUserByUserName(username);
     }
 
     /**

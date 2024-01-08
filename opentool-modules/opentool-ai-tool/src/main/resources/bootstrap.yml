@@ -49,11 +49,11 @@ opentool-system:
 
 # 子模块下的声明式接口包 日志级别必须是debug ,不然不打印日志
 logging:
-  level:
-    com:
-      opentool:
-        system:
-          api: debug
+    level:
+      com:
+        opentool:
+          system:
+            api: debug
 # Feign
 feign:
   client:
@@ -85,9 +85,9 @@ chatgpt:
 
 # tts
 tts:
-  apiKey: dbc728ec904c412db821e49484047059 # tts_api_key 每月免费5h
+  apiKey: xxx # tts_api_key 每月免费5h
 
 # Stt
 stt:
-  apiKey: 851a20680bb14607998ba2fe33af7e29  #每月免费5h
-  region: eastasia
+  apiKey: xxx  #每月免费5h
+  region: xxx

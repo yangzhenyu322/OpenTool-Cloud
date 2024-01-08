@@ -3,7 +3,7 @@ package com.opentool.dashboard.service;
 import com.opentool.dashboard.domain.entify.CollectLog;
 import com.opentool.dashboard.domain.entify.ContributeLog;
 import com.opentool.dashboard.domain.entify.LoginLog;
-import com.opentool.system.api.domain.User;
+import com.opentool.system.api.domain.SysUser;
 
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,7 @@ public interface IDataAnalysisService {
 
     boolean insertLoginLog(LoginLog loginLog);
 
-    List<User> getUserList();
+    List<SysUser> getUserList();
 
     List<CollectLog> getCollectLogList();
 

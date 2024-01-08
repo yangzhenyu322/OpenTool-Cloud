@@ -1,7 +1,7 @@
 package com.opentool.system.api;
 
 import com.opentool.system.api.config.DefaultFeignConfiguration;
-import com.opentool.system.api.domain.User;
+import com.opentool.system.api.domain.SysUser;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +21,10 @@ public interface RemoteUserService {
      * @return
      */
     @GetMapping("/user/lists")
-    List<User> getUserList();
+    List<SysUser> getUserList();
+
+    @GetMapping("/user/username/{username}")
+    SysUser findUserByUserName(@PathVariable("username") String username);
 
     /**
      * 查询用户数据

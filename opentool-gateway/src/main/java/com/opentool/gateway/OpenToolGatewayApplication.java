@@ -1,12 +1,16 @@
 package com.opentool.gateway;
 
+import com.opentool.common.core.annotation.EnableOTFeignClients;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * / @Author: ZenSheep
  * / @Date: 2023/7/14 13:17
  */
+@EnableAsync
+@EnableOTFeignClients
 @SpringBootApplication
 public class OpenToolGatewayApplication {
     public static void main(String[] args) {

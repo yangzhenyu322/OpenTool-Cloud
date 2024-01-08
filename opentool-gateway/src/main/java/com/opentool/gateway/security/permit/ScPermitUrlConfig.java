@@ -1,4 +1,4 @@
-package com.opentool.gateway.security;
+package com.opentool.gateway.security.permit;
 
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import java.util.Set;
  */
 @Component
 public class ScPermitUrlConfig {
-    public static final String CONTEXT_PATH = "/api/v0";
+    public static final String CONTEXT_PATH = "/api/v1";
 
     /**
      * 需要访问的url

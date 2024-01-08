@@ -9,7 +9,7 @@ import com.opentool.dashboard.mapper.ContributeLogMapper;
 import com.opentool.dashboard.mapper.LoginLogMapper;
 import com.opentool.dashboard.service.IDataAnalysisService;
 import com.opentool.system.api.RemoteUserService;
-import com.opentool.system.api.domain.User;
+import com.opentool.system.api.domain.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +49,7 @@ public class DataAnalysisService implements IDataAnalysisService {
     }
 
     @Override
-    public List<User> getUserList() {
+    public List<SysUser> getUserList() {
         return remoteUserService.getUserList();
     }
 

@@ -1,6 +1,6 @@
 package com.opentool.system.domain.vo;
 
-import com.opentool.system.api.domain.User;
+import com.opentool.system.api.domain.SysUser;
 import com.opentool.system.domain.dto.UserInfo;
 import lombok.Data;
 
@@ -19,8 +19,8 @@ public class PageUser {
 
     }
 
-    public PageUser(Long total, List<User> users) {
+    public PageUser(Long total, List<SysUser> sysUsers) {
         this.total = total;
-        this.userInfos = UserInfo.userConvertUserInfoList(users);
+        this.userInfos = UserInfo.userConvertUserInfoList(sysUsers);
     }
 }

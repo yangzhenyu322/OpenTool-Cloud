@@ -19,7 +19,7 @@ CREATE TABLE `config_info` (
   `md5` varchar(32) DEFAULT NULL COMMENT 'md5',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  `src_user` text COMMENT 'source user',
+  `src_user` text COMMENT 'source sysUser',
   `src_ip` varchar(50) DEFAULT NULL COMMENT 'source ip',
   `app_name` varchar(128) DEFAULT NULL,
   `tenant_id` varchar(128) DEFAULT '' COMMENT '租户字段',
@@ -65,7 +65,7 @@ CREATE TABLE `config_info_beta` (
   `md5` varchar(32) DEFAULT NULL COMMENT 'md5',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  `src_user` text COMMENT 'source user',
+  `src_user` text COMMENT 'source sysUser',
   `src_ip` varchar(50) DEFAULT NULL COMMENT 'source ip',
   `tenant_id` varchar(128) DEFAULT '' COMMENT '租户字段',
   `encrypted_data_key` text NOT NULL COMMENT '秘钥',
@@ -88,7 +88,7 @@ CREATE TABLE `config_info_tag` (
   `md5` varchar(32) DEFAULT NULL COMMENT 'md5',
   `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  `src_user` text COMMENT 'source user',
+  `src_user` text COMMENT 'source sysUser',
   `src_ip` varchar(50) DEFAULT NULL COMMENT 'source ip',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_configinfotag_datagrouptenanttag` (`data_id`,`group_id`,`tenant_id`,`tag_id`)
@@ -190,7 +190,7 @@ CREATE TABLE `tenant_info` (
   KEY `idx_tenant_id` (`tenant_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='tenant_info';
 
-CREATE TABLE `users` (
+CREATE TABLE `sysUsers` (
 	`username` varchar(50) NOT NULL PRIMARY KEY,
 	`password` varchar(500) NOT NULL,
 	`enabled` boolean NOT NULL
@@ -209,6 +209,6 @@ CREATE TABLE `permissions` (
     UNIQUE INDEX `uk_role_permission` (`role`,`resource`,`action`) USING BTREE
 );
 
-INSERT INTO users (username, password, enabled) VALUES ('nacos', '$2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu', TRUE);
+INSERT INTO sysUsers (username, password, enabled) VALUES ('nacos', '$2a$10$EuWPZHzz32dJN7jexM34MOeYirDdFAZm2kuWj7VEOJhhZkDrxfvUu', TRUE);
 
 INSERT INTO roles (username, role) VALUES ('nacos', 'ROLE_ADMIN');
