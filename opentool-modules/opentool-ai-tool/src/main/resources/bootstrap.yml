@@ -85,9 +85,9 @@ chatgpt:
 
 # tts
 tts:
-  apiKey: xxx # tts_api_key 每月免费5h
+  apiKey: dbc728ec904c412db821e49484047059 # tts_api_key 每月免费5h
 
 # Stt
 stt:
-  apiKey: xxx  #每月免费5h
-  region: xxx
+  apiKey: 851a20680bb14607998ba2fe33af7e29  #每月免费5h
+  region: eastasia

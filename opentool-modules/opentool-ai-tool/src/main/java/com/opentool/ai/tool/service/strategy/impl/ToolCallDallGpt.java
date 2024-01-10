@@ -211,7 +211,7 @@ public class ToolCallDallGpt implements IChatGptStrategy {
                 "{\n" +
                 "  \"prompt\":" + imageParam.getPrompt() + ",\n" +
                 "  \"imgName\":" + imageParam.getImageName() + ",\n" +
-                "  \"toolCall Result\":已生成图像, 不需要你再生成,\n" +
+                "  \"toolCall Result\":已通过其他工具生成图像, 不需要你再生成,也不需要在结尾给出图片url地质\n" +
                 "}";
             Message message1 = Message.builder().toolCallId(openAiReturnToolCalls.getId()).role(BaseMessage.Role.TOOL).name("genImage").content(content).build();
             chatMessages.add(message);
@@ -281,7 +281,7 @@ public class ToolCallDallGpt implements IChatGptStrategy {
                 .size(size)
                 .style(style)
                 .build();
-        ImageResponse imageResponse = openAiClient3_5.genImages(image);
+        ImageResponse imageResponse = openAiClient4.genImages(image);
         return imageResponse.getData().get(0).getUrl();
     }
 

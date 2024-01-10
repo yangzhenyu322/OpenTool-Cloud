@@ -1,5 +1,5 @@
 server:
-  port: 80 # 网关端口
+  port: 8080 # 网关端口
 spring:
   application:
     name: opentool-gateway # 服务名称
@@ -67,7 +67,7 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins: # 允许哪些网站的跨域请求
-              - "http://localhost:5173"
+              - "http://localhost:5173"  # 改成80端口就不行了？？？？
             allowedMethods: # 允许的跨域ajax的请求方法
               - "GET"
               - "POST"
