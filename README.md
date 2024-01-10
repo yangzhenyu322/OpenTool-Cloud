@@ -8,7 +8,7 @@
 
 OpenTool 是一个一站式的开放智能工具平台，旨在将实用高效的传统工具与AI工具结合起来，帮助用户提升工作效率，并鼓励开发者在该平台上进行应用场景的创新。
 
-- 采用前后端分离架构，前端基于Vue3、Vite、Ant Design（[OpenTool-Ui](https://github.com/yangzhenyu322/OpenTool)）
+- 采用前后端分离架构，前端基于Vue3、Vite、Ant Design（[OpenTool-UI](https://github.com/yangzhenyu322/OpenTool)）
 - 后端采用Spring Boot、Spring Cloud & Alibaba
 - Nacos注册中心、Feign远程调用、Spring Cloud Gateway网关、Spring Security安全框架 + JWT认证
 - Mysql数据库、Redis缓存
@@ -24,10 +24,10 @@ com.opentool
 |--opentool-common         // 通用模块
 |		└──opentool-common-core              // 核心模块
 |--opentool-modules        // 业务模块
-|		└──opentool-system                   // 系统服务模块     【8081】
-|		└──opentool-dashboard                // 仪表盘业务模块   【8082】
-|		└──opentool-general-tool             // 实用工具业务模块  【8083】
-|		└──opentool-ai-tool                  // AI工具业务模块   【8084】
+|		└──opentool-system                   // 系统服务模块		【8081】
+|		└──opentool-dashboard                // 仪表盘模块		 【8082】
+|		└──opentool-general-tool             // 实用工具模块		【8083】
+|		└──opentool-ai-tool                  // AI工具模块		  【8084】
 |--pom.xml					// 公共依赖
 ```
 

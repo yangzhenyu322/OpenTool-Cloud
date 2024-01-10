@@ -67,12 +67,9 @@ feign:
 
 # ChatGpt
 chatgpt:
-  apiHost: https://api.qqslyx.com/
-  apiKey3_5: sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266
-  apiKey4: sk-GxoeUJ0L8vOjWRSP0eAbD53e4fA8436fB894Aa4c4f9f1220
-#  apiHost: https://vip.zzapi.life/
-#  apiKey3_5: sk-s7uphlJIyJJN9isi9aE17b57Eb604c6a8b957fEf2c8f0e54
-#  apiKey4: sk-F0TNLFt8lEUrLT7D7e00E17e453a48C5988f46763e5d2cC2  # key：sk-JVjqTCDR9L7utVrr6c64FaA78eCf40F585B3F582Da4e275e、sk-F0TNLFt8lEUrLT7D7e00E17e453a48C5988f46763e5d2cC2
+  apiHost: https://xxx/
+  apiKey3_5: sk-xxxxx
+  apiKey4: sk-xxxx
   proxy:
     httpHost: 127.0.0.1
     port: 7890
@@ -85,9 +82,9 @@ chatgpt:
 
 # tts
 tts:
-  apiKey: dbc728ec904c412db821e49484047059 # tts_api_key 每月免费5h
+  apiKey: xxxx # tts_api_key 每月免费5h
 
 # Stt
 stt:
-  apiKey: 851a20680bb14607998ba2fe33af7e29  #每月免费5h
+  apiKey: xxx  #每月免费5h
   region: eastasia
