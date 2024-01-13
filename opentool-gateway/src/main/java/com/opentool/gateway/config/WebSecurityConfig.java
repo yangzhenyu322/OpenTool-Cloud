@@ -80,7 +80,7 @@ public class WebSecurityConfig {
                 // 登录接口
                 .httpBasic()
                 .and()
-                .formLogin().loginPage("/login") //会进行SecurityUserDetailsService的findByUsername判断是否登录成功
+                .formLogin().loginPage("/api/v1/login") //会进行SecurityUserDetailsService的findByUsername判断是否登录成功
                 .authenticationSuccessHandler(authenticationSuccessHandler) //认证成功
                 .authenticationFailureHandler(authenticationFailHandler) // 认证失败
                 .and()
@@ -89,7 +89,7 @@ public class WebSecurityConfig {
                 .exceptionHandling().accessDeniedHandler(scAccessDeniedHandler) // 授权失败
                 .and()
                 // 登出接口
-                .logout().logoutUrl("/logout")
+                .logout().logoutUrl("/api/v1/logout")
                 .logoutHandler(logoutHandler) // 登出处理
                 .logoutSuccessHandler(logoutSuccessHandler);  // 登出成功处理
 

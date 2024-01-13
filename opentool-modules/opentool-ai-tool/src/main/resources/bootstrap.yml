@@ -67,9 +67,12 @@ feign:
 
 # ChatGpt
 chatgpt:
-  apiHost: https://xxx/
-  apiKey3_5: sk-xxxxx
-  apiKey4: sk-xxxx
+  apiHost: https://api.qqslyx.com/
+  apiKey3_5: sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266
+  apiKey4: sk-GxoeUJ0L8vOjWRSP0eAbD53e4fA8436fB894Aa4c4f9f1220
+#  apiHost: https://xxx/
+#  apiKey3_5: sk-xxxxx
+#  apiKey4: sk-xxxx
   proxy:
     httpHost: 127.0.0.1
     port: 7890
@@ -82,9 +85,11 @@ chatgpt:
 
 # tts
 tts:
-  apiKey: xxxx # tts_api_key 每月免费5h
+  apiKey: dbc728ec904c412db821e49484047059 # tts_api_key 每月免费5h
+#  apiKey: xxxx # tts_api_key 每月免费5h
 
 # Stt
 stt:
-  apiKey: xxx  #每月免费5h
+  apiKey: 851a20680bb14607998ba2fe33af7e29  #每月免费5h
+#  apiKey: xxx  #每月免费5h
   region: eastasia

@@ -54,6 +54,10 @@ public class AuthenticationSuccessHandler extends WebFilterChainServerAuthentica
         HttpHeaders httpHeaders = response.getHeaders();
         httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
         httpHeaders.add("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        httpHeaders.add("Access-Control-Allow-Credentials", "true");
+        // 在使用凭据时，Access-Control-Allow-Origin 不可以设置为 *，而应该指定具体的域名
+        httpHeaders.add("Access-Control-Allow-Origin", "http://localhost:5173");
+
         // 设置body
         HashMap<String, Object> map = new HashMap<>();
         boolean isRememberMe = Boolean.parseBoolean(exchange.getRequest().getHeaders().getFirst("REMEMBER_ME"));
@@ -82,6 +86,7 @@ public class AuthenticationSuccessHandler extends WebFilterChainServerAuthentica
             map.put("code", HttpStatus.OK.value());
             map.put("message", "登录成功");
             map.put("token", token);
+            log.info("new token:" + token);
             log.info("sign in success!");
         } catch (Exception ex) {
             ex.printStackTrace();

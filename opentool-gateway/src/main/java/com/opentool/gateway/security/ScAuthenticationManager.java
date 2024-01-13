@@ -53,8 +53,8 @@ public class ScAuthenticationManager implements ReactiveAuthenticationManager {
         // 校验token
         log.info("ScAuthenticationManager.authenticate()");
         String username = authentication.getName(); // 获取用户提供的用户名（账号）
-        String password = authentication.getCredentials().toString(); //获取用户提供的密码
         log.info("username:{}", username);
+        String password = authentication.getCredentials().toString(); //获取用户提供的密码
         log.info("password:{}", password);
 
         if (!StringUtils.hasText(username)) {

@@ -4,8 +4,6 @@ import com.opentool.gateway.security.tool.JWTUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,12 +15,9 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 认证信息存储管理(用户信息上下文存储类)
@@ -66,28 +61,29 @@ public class ScSecurityContextRepository implements ServerSecurityContextReposit
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
                 authorities.add(new SimpleGrantedAuthority((String) userMap.get("role")));
+                log.info("role = {}", (String) userMap.get("role"));
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(null, null, authorities);
 
-                // 仍存在旧的有效令牌, 则刷新令牌（主要是刷新过期时间）
-                String newToken;
-
-                Map<String, String> payload = new HashMap<>();
-                payload.put("username", (String) userMap.get("username"));
-                payload.put("role", (String) userMap.get("role"));
-
-                boolean isRememberMe = Boolean.parseBoolean(exchange.getRequest().getHeaders().getFirst("REMEMBER_ME"));
-                ServerHttpResponse response = exchange.getResponse();
-                if (!isRememberMe) {
-                    newToken = JWTUtils.creatToken(payload, 60 * 60 * 24); // 创建token，过期时间设置为24h
-                    response.addCookie(ResponseCookie.from("token", newToken).path("/").build());
-                    // maxAge默认-1 浏览器关闭cookie失效
-                    redisTemplate.opsForValue().set((String) userMap.get("username"), newToken, 1, TimeUnit.DAYS);
-                } else {
-                    newToken = JWTUtils.creatToken(payload, 60 * 60 * 24 * JWTUtils.REMEMBER_ME); // 创建token，用户勾选"请记住我时"，token的过期时间设置为7天
-                    response.addCookie(ResponseCookie.from("token", newToken).maxAge(Duration.ofDays(JWTUtils.REMEMBER_ME)).path("/").build());
-                    redisTemplate.opsForValue().set((String) userMap.get("username"), newToken, JWTUtils.REMEMBER_ME, TimeUnit.DAYS); // 保存7天
-                }
+                // 仍存在旧的有效令牌, 则刷新令牌（主要是刷新过期时间）(存在bug)
+//                String newToken;
+//
+//                Map<String, String> payload = new HashMap<>();
+//                payload.put("username", (String) userMap.get("username"));
+//                payload.put("role", (String) userMap.get("role"));
+//
+//                boolean isRememberMe = Boolean.parseBoolean(exchange.getRequest().getHeaders().getFirst("REMEMBER_ME"));
+//                ServerHttpResponse response = exchange.getResponse();
+//                if (!isRememberMe) {
+//                    newToken = JWTUtils.creatToken(payload, 60 * 60 * 24); // 创建token，过期时间设置为24h
+//                    response.addCookie(ResponseCookie.from("token", newToken).path("/").build());
+//                    // maxAge默认-1 浏览器关闭cookie失效
+//                    redisTemplate.opsForValue().set((String) userMap.get("username"), newToken, 1, TimeUnit.DAYS);
+//                } else {
+//                    newToken = JWTUtils.creatToken(payload, 60 * 60 * 24 * JWTUtils.REMEMBER_ME); // 创建token，用户勾选"请记住我时"，token的过期时间设置为7天
+//                    response.addCookie(ResponseCookie.from("token", newToken).maxAge(Duration.ofDays(JWTUtils.REMEMBER_ME)).path("/").build());
+//                    redisTemplate.opsForValue().set((String) userMap.get("username"), newToken, JWTUtils.REMEMBER_ME, TimeUnit.DAYS); // 保存7天
+//                }
 
                 securityContext.setAuthentication(authentication);
                 return Mono.just(securityContext);

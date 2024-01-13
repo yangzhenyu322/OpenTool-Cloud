@@ -66,8 +66,9 @@ spring:
         add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
         cors-configurations:
           '[/**]':
-            allowedOrigins: # 允许哪些网站的跨域请求
+            allowedOrigins:  # 允许哪些网站的跨域请求
               - "http://localhost:5173"  # 改成80端口就不行了？？？？
+#            allowedOriginPatterns: "*"
             allowedMethods: # 允许的跨域ajax的请求方法
               - "GET"
               - "POST"
@@ -77,6 +78,8 @@ spring:
             allowedHeaders: "*" # 允许在请求中携带头信息
             allowCredentials: true # 是否允许携带cookie信息
             maxAge: 360000 # 这次跨域检测的有效期
+      default-filters:
+        - DedupeResponseHeader=Vary Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
       httpclient:
         pool:
           # 在连接池中的空闲连接的最大空闲时间,默认60000ms，http.timeout默认为30000ms（要保证max-idle-time不大于connection-timeout）
