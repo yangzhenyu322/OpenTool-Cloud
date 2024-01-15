@@ -1,6 +1,7 @@
 package com.opentool.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.opentool.common.core.domain.R;
 import com.opentool.system.api.domain.SysUser;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface IUserService extends IService<SysUser> {
     List<Map<String, Object>> getSelectMaps(String startDate, String endDate);
 
     SysUser findUserByUserName(String username);
+
+    R<?> registerUser(SysUser userInfo);
 }

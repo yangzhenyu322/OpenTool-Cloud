@@ -29,16 +29,6 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @GetMapping("/normal")
-    public R<?> normal() {
-        return R.ok("normal");
-    }
-
-    @GetMapping("/admin")
-    public R<?> admin() {
-        return R.ok("admin");
-    }
-
     /**
      * IP定位API（腾讯位置服务，第三方）：https://lbs.qq.com/service/webService/webServiceGuide/webServiceIp
      * @param userIP
@@ -133,9 +123,19 @@ public class UserController {
         return userService.queryUserList();
     }
 
+    /**
+     * 通过用户名获取用户信息
+     * @param username
+     * @return
+     */
     @GetMapping("/username/{username}")
     public SysUser findUserByUserName(@PathVariable("username") String username) {
         return userService.findUserByUserName(username);
+    }
+
+    @PostMapping("/register")
+    public R<?> register(@RequestBody SysUser user) {
+        return userService.registerUser(user);
     }
 
     /**

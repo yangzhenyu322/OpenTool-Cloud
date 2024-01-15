@@ -13,13 +13,14 @@ import java.util.Set;
  */
 @Component
 public class ScPermitUrlConfig {
-    public static final String CONTEXT_PATH = "/api/v0";
+    public static final String CONTEXT_PATH = "/api/v1";
 
     /**
      * 需要访问的url
      */
     private String[] permitUrl = {
-            "/**",
+            "/user/register"
+//            "/**",
 //            "/actuator/**",
 //            "/api-account/account/**"
     };

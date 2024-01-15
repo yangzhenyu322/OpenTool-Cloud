@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.server.authorization.AuthorizationContext;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -37,11 +36,15 @@ public class ScAuthorizationManager implements ReactiveAuthorizationManager<Auth
 //            }
 
             // 鉴权：判断该用户角色是否有访问该接口的权限
-            for (GrantedAuthority authority : auth.getAuthorities()) {
-                if (!"admin".equals(authority.getAuthority())) {
-                    log.info("AuthorizationDecision");
-                    return new AuthorizationDecision(false);  // 鉴权失败：-> ScAuthenticationEntryPoint -> ScAccessDeniedHandler
-                }
+//            for (GrantedAuthority authority : auth.getAuthorities()) {
+//                if (!"admin".equals(authority.getAuthority())) {
+//                    log.info("AuthorizationDecision");
+//                    return new AuthorizationDecision(false);  // 鉴权失败：-> ScAuthenticationEntryPoint -> ScAccessDeniedHandler
+//                }
+//            }
+
+            if (auth.getAuthorities().size() <= 0) {
+                return new AuthorizationDecision(false); // 鉴权失败：-> ScAuthenticationEntryPoint -> ScAccessDeniedHandler
             }
 
             log.info("Authorization Success！");
