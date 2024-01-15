@@ -30,9 +30,11 @@ public class AuthenticationFailHandler implements ServerAuthenticationFailureHan
         ServerHttpResponse response = webFilterExchange.getExchange().getResponse();
         response.setStatusCode(HttpStatus.FORBIDDEN);
         response.getHeaders().add("Content-Type", "application/json; charset=UTF-8");
+        response.getHeaders().add("Access-Control-Allow-Credentials", "true");
+        response.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:5173");
         HashMap<String, Object> map = new HashMap<>();
         map.put("code", HttpStatus.FORBIDDEN.value());
-        map.put("message", exception.getMessage());
+        map.put("msg", exception.getMessage());
         log.error("access forbidden path = {}", webFilterExchange.getExchange().getRequest().getPath());
 
         DataBuffer dataBuffer = response.bufferFactory().wrap(JSON.toJSONBytes(map));

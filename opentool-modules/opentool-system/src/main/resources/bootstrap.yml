@@ -48,14 +48,9 @@ file-server:
 # AliYun-OSS
 aliyun:
   # 访问OSS的域名
-  endpoint: http://oss-cn-shenzhen.aliyuncs.com
+  endpoint: xxx
   # OSS的KeyId和KeySecret
-  accessKeyId: LTAI5tGzBmBrLy3R8e1E5ARf
-  accessKeySecret: ep3kt9X8zT1HlX5fjleGbmEH7SD1uE
-  # 访问OSS的域名
-#  endpoint: xxx
-#  # OSS的KeyId和KeySecret
-#  accessKeyId: xxx
-#  accessKeySecret: xxx
+  accessKeyId: xxx
+  accessKeySecret: xxx
   # 管理所存储Object的存储空间名称
   bucketName: opentool

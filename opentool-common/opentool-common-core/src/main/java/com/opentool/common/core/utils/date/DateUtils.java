@@ -29,6 +29,10 @@ public class DateUtils {
 
     // YYYY_MM_DD_T_HH_MM_SS_SSSZ 转 YYYY_MM_DD_HH_MM_SS
     public static String DateParseTime(Date date) {
+        if (date == null) {
+            return null;
+        }
+
         DateFormat df = new SimpleDateFormat(YYYY_MM_DD_T_HH_MM_SS_SSS_ZZ_ZZ, Locale.UK);
         DateFormat df2 = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS);
 

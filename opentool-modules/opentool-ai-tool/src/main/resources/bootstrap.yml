@@ -67,12 +67,9 @@ feign:
 
 # ChatGpt
 chatgpt:
-  apiHost: https://api.qqslyx.com/
-  apiKey3_5: sk-CMAaXEQfolbfguToC0E89d26626645CfAc8eD3D700CdE266
-  apiKey4: sk-GxoeUJ0L8vOjWRSP0eAbD53e4fA8436fB894Aa4c4f9f1220
-#  apiHost: https://xxx/
-#  apiKey3_5: sk-xxxxx
-#  apiKey4: sk-xxxx
+  apiHost: https://xxx/
+  apiKey3_5: sk-xxxxx
+  apiKey4: sk-xxxx
   proxy:
     httpHost: 127.0.0.1
     port: 7890

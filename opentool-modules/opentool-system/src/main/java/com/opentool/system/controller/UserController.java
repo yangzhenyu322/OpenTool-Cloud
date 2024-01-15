@@ -133,6 +133,11 @@ public class UserController {
         return userService.findUserByUserName(username);
     }
 
+    /**
+     * 用户注册
+     * @param user
+     * @return
+     */
     @PostMapping("/register")
     public R<?> register(@RequestBody SysUser user) {
         return userService.registerUser(user);

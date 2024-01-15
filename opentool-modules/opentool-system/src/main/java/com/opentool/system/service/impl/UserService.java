@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,12 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> implements IUs
 
         // 插入新用户
         user.setRoleId(3L);  // 设置默认权限
+        user.setNickName(user.getUserName()); // 默认新用户昵称为用户（账户）名
+        user.setStatus('0'); // 默认用户状态为正常——0
+        user.setCreateTime(new Date()); // 当前时间
+        user.setCreateBy(user.getUserName()); // 默认由自己创建
+        user.setUpdateBy(user.getUserName()); // 默认由自己更新信息
+        user.setUpdateTime(new Date()); // 当前时间
         boolean isInsertSuccess = userMapper.insert(user) > 0;  // 返回值int代表插入成功条数，大于0表示插入成功条数，等于0则代表插入失败
 
         if (!isInsertSuccess) {

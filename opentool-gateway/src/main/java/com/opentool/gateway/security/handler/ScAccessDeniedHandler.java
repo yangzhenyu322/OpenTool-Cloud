@@ -26,10 +26,13 @@ public class ScAccessDeniedHandler implements ServerAccessDeniedHandler {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.FORBIDDEN);
         response.getHeaders().add("Content-Type", "application/json; charset=UTF-8");
+        response.getHeaders().add("Access-Control-Allow-Credentials", "true");
+        // 在使用凭据时，Access-Control-Allow-Origin 不可以设置为 *，而应该指定具体的域名
+        response.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:5173");
 
         HashMap<String, Object> map = new HashMap<>();
         map.put("code", HttpStatus.UNAUTHORIZED.value());
-        map.put("message", "未授权禁止访问");
+        map.put("msg", "未授权禁止访问");
 
         log.error("authorization access forbidden path={}", exchange.getRequest().getPath());
 

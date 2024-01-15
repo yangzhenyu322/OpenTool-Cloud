@@ -26,10 +26,12 @@ public class ScAuthenticationEntryPoint implements ServerAuthenticationEntryPoin
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.FORBIDDEN);
         response.getHeaders().add("Content-Type", "application/json; charset=UTF-8");
+        response.getHeaders().add("Access-Control-Allow-Credentials", "true");
+        response.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:5173");
 
         HashMap<String, Object> map = new HashMap<>();
         map.put("code", HttpStatus.FORBIDDEN.value());
-        map.put("message", "未登录禁止访问");
+        map.put("msg", "未登录禁止访问");
 
         log.error("authentication access forbidden path={}", exchange.getRequest().getPath());
 

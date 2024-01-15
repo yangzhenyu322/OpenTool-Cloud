@@ -84,14 +84,14 @@ public class AuthenticationSuccessHandler extends WebFilterChainServerAuthentica
             }
 
             map.put("code", HttpStatus.OK.value());
-            map.put("message", "登录成功");
+            map.put("msg", "登录成功");
             map.put("token", token);
             log.info("new token:" + token);
             log.info("sign in success!");
         } catch (Exception ex) {
             ex.printStackTrace();
             map.put("code", HttpStatus.FORBIDDEN.value());
-            map.put("message", "登录失败");
+            map.put("msg", "登录失败");
             log.info("sign in failed!");
         }
 

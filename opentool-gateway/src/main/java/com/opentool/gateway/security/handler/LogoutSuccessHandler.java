@@ -31,12 +31,14 @@ public class LogoutSuccessHandler implements ServerLogoutSuccessHandler {
         HttpHeaders httpHeaders = response.getHeaders();
         httpHeaders.add("Content-Type", "application/json; charset=UTF-8");
         httpHeaders.add("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+        httpHeaders.add("Access-Control-Allow-Credentials", "true");
+        httpHeaders.add("Access-Control-Allow-Origin", "http://localhost:5173");
         // 设置body
         Map<String, Object> map = new HashMap<>();
         // 删除token
         response.addCookie(ResponseCookie.from("token", "logout").maxAge(0).path("/").build());
         map.put("code", HttpStatus.OK.value());
-        map.put("message", "退出登录成功");
+        map.put("msg", "退出登录成功");
         log.info("logout success!");
 
         DataBuffer dataBuffer = response.bufferFactory().wrap(JSON.toJSONBytes(map));
