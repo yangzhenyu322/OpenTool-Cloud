@@ -1,5 +1,6 @@
 package com.opentool.common.core.utils.date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.math.BigInteger;
@@ -47,6 +48,10 @@ public class DateUtils {
 
     // YYYY_MM_DD_HH_MM_SS 转 YYYY_MM_DD_T_HH_MM_SS_SSSZ
     public static Date TimeParseDate(String time) {
+        if (StringUtils.isEmpty(time)) {
+            return null;
+        }
+
         DateFormat df = new SimpleDateFormat(YYYY_MM_DD_T_HH_MM_SS_SSS_ZZ_ZZ, Locale.UK);
         DateFormat df2 = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS);
 

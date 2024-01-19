@@ -63,7 +63,7 @@ public class AuthenticationSuccessHandler extends WebFilterChainServerAuthentica
         boolean isRememberMe = Boolean.parseBoolean(exchange.getRequest().getHeaders().getFirst("REMEMBER_ME"));
 
         log.info(authentication.toString());
-        log.info("authentication.getName():{}", authentication.getName());
+        log.info("isRememberMe:{}", isRememberMe);
 
         List<? extends GrantedAuthority> list = new ArrayList<>(authentication.getAuthorities());
         try {
@@ -72,15 +72,15 @@ public class AuthenticationSuccessHandler extends WebFilterChainServerAuthentica
             payload.put("role", list.get(0).getAuthority()); // 这里只添加了一种角色，实际上用户可以有不同的角色类型
 
             String token;
-            if (!isRememberMe) {
-                token = JWTUtils.creatToken(payload, 60 * 60 * 24); // 创建token，过期时间设置为24h
-                response.addCookie(ResponseCookie.from("token", token).path("/").build());
-                // maxAge默认-1 浏览器关闭cookie失效
-                redisTemplate.opsForValue().set(authentication.getName(), token, 1, TimeUnit.DAYS);
-            } else {
+            if (isRememberMe) {
                 token = JWTUtils.creatToken(payload, 60 * 60 * 24 * JWTUtils.REMEMBER_ME); // 创建token，用户勾选"请记住我时"，token的过期时间设置为7天
                 response.addCookie(ResponseCookie.from("token", token).maxAge(Duration.ofDays(JWTUtils.REMEMBER_ME)).path("/").build());
                 redisTemplate.opsForValue().set(authentication.getName(), token, JWTUtils.REMEMBER_ME, TimeUnit.DAYS); // 保存7天
+            } else {
+                token = JWTUtils.creatToken(payload, 60 * 60 * 24 * 1); // 创建token，过期时间设置为24h
+                response.addCookie(ResponseCookie.from("token", token).maxAge(Duration.ofDays(1)).path("/").build());
+                // maxAge默认-1 浏览器关闭cookie失效
+                redisTemplate.opsForValue().set(authentication.getName(), token, 1, TimeUnit.DAYS);
             }
 
             map.put("code", HttpStatus.OK.value());

@@ -14,25 +14,15 @@ import org.springframework.context.annotation.Scope;
  */
 @Configuration
 public class OSSConfiguration {
-
-    private volatile static OSS ossClient;
-
-    private volatile static OSSClientBuilder ossClientBuilder;
-
-    private static String endpoint;
-
     private static String accessKeyId;
 
     private static String accessKeySecret;
 
-    @Value("${aliyun.bucketName}")
-    private String bucketName;
+    private static String endpoint;
 
-    @Value("${aliyun.endpoint}")
-    public void setEndpoint(String endpoint) {
-        OSSConfiguration.endpoint = endpoint;
-    }
+    private static String bucketName;
 
+    // 静态变量值无法通过@Value直接注入，需要使用公共set方法注入
     @Value("${aliyun.accessKeyId}")
     public void setAccessKeyId(String accessKeyId) {
         OSSConfiguration.accessKeyId = accessKeyId;
@@ -43,11 +33,27 @@ public class OSSConfiguration {
         OSSConfiguration.accessKeySecret = accessKeySecret;
     }
 
-    public String getBucketName() {
-        return bucketName;
+    @Value("${aliyun.oss.endpoint}")
+    public void setEndpoint(String endpoint) {
+        OSSConfiguration.endpoint = endpoint;
     }
 
+    @Value("${aliyun.oss.bucketName}")
+    public void setBucketName(String bucketName) {
+        OSSConfiguration.bucketName = bucketName;
+    }
+
+    public static String getBucketName() {
+        return OSSConfiguration.bucketName;
+    }
+
+    // 单例模式下使用volatile是为了禁止重排序，防止instance = new Instance() 出现问题
+    private volatile static OSS ossClient;
+
+    private volatile static OSSClientBuilder ossClientBuilder;
+
     @Bean
+    // 在使用不同产品时容易出现线程安全问题，解决方法升级到SDK 2.0：https://help.aliyun.com/zh/sdk/product-overview/differences-between-v1-and-v2-sdks
     @Scope("prototype")
     public static OSS initOSSClient() {
         if (ossClient == null) {
@@ -59,7 +65,6 @@ public class OSSConfiguration {
         }
         return ossClient;
     }
-    
 
     public static OSSClientBuilder initOSSClientBuilder() {
         if (ossClientBuilder == null) {

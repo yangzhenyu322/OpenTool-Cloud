@@ -80,7 +80,7 @@ public class WebSecurityConfig {
                 // 登录接口
                 .httpBasic()
                 .and()
-                .formLogin().loginPage("/api/v1/login") //会进行SecurityUserDetailsService的findByUsername判断是否登录成功
+                .formLogin().loginPage("/api/v1/login") // 在ScAuthorizationManager的authenticate处理登录请求
                 .authenticationSuccessHandler(authenticationSuccessHandler) //认证成功
                 .authenticationFailureHandler(authenticationFailHandler) // 认证失败
                 .and()

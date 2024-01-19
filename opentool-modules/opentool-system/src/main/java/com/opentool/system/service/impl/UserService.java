@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.opentool.common.core.domain.R;
 import com.opentool.system.api.domain.SysUser;
+import com.opentool.system.domain.dto.UserInfo;
 import com.opentool.system.mapper.UserMapper;
+import com.opentool.system.service.ISMSService;
 import com.opentool.system.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,6 +29,9 @@ import java.util.regex.Pattern;
 public class UserService extends ServiceImpl<UserMapper, SysUser> implements IUserService {
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    ISMSService smsService;
 
     @Override
     public List<SysUser> queryUserList() {
@@ -57,11 +62,11 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> implements IUs
     }
 
     @Override
-    public R<?> registerUser(SysUser user) {
+    public R<?> registerUser(SysUser user, String codeRequestId, String inputCode) {
         log.info("Begin Register: " + user.getUserName());
 
         // 检测用户名是否为空
-        if (!StringUtils.hasText(user.getUserName())) {
+        if (StringUtils.isEmpty(user.getUserName())) {
             return R.fail("用户名不能为空");
         }
 
@@ -75,7 +80,7 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> implements IUs
         }
 
         // 密码格式检验
-        if (!StringUtils.hasText(user.getPassword())) {
+        if (StringUtils.isEmpty(user.getPassword())) {
             // 密码为空
             return R.fail("密码不能为空");
         }
@@ -89,7 +94,7 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> implements IUs
             return R.fail("手机号长度不正确");
         }
 
-        if (!isStr2Num(user.getPhoneNumber())) {
+        if (!StringUtils.isNumeric(user.getPhoneNumber())) {
             return R.fail("手机号格式不正确");
         }
 
@@ -100,6 +105,12 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> implements IUs
 
         if (isPhoneNumberExit) {
             return R.fail("该手机号已注册账户");
+        }
+
+        // 检测验证码是否正确
+        R<?> verifyResult = smsService.verifyCode(codeRequestId, inputCode);
+        if (!(verifyResult.getCode() == 200)) {
+            return R.fail(verifyResult.getMsg());
         }
 
         // 插入新用户
@@ -119,6 +130,58 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> implements IUs
 
         log.info("用户[{}]注册成功：", user.getUserName());
         return R.ok(null, "用户注册成功");
+    }
+
+    @Override
+    public R<?> checkPhoneNumberRegistered(String phoneNumber) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("phone_number", phoneNumber);
+        List<SysUser> sysUsers = userMapper.selectByMap(map);
+
+        if (sysUsers.size() > 0) { // 被注册过
+            return R.fail("该手机号已被注册");
+        }
+
+        return R.ok("该手机号可以注册");
+    }
+
+    @Override
+    public R<?> checkUsernameAndPhoneConsistent(String username, String phoneNumber) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("user_name", username);
+        map.put("phone_number", phoneNumber);
+        List<SysUser> sysUsers = userMapper.selectByMap(map);
+
+        if (sysUsers.size() > 0) {
+            // 用户名与手机号一致
+            log.info("用户名与手机号一致");
+            return R.ok("用户名与手机号不一致");
+        }
+
+        return R.fail("用户名与手机号码不一致");
+    }
+
+    @Override
+    public R<?> updateUserPassword(UserInfo userInfo) {
+        String password = userInfo.getPassword();
+        String repeatPassword = userInfo.getRepeatPassword();
+
+        if (!password.equals(repeatPassword)) {
+            return R.fail("密码不一致，请重新输入");
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("user_name", userInfo.getUserName());
+        userInfo.setUserId(userMapper.selectByMap(map).get(0).getUserId());
+        boolean isUpdatSuccess = userMapper.updateById(UserInfo.userInfoParseUser(userInfo)) > 0;
+
+        if(isUpdatSuccess) {
+            log.info("更新用户密码:{}", userInfo);
+            return R.ok("更新密码成功");
+        }
+
+        log.info("更新密码失败");
+        return R.fail("更新密码失败");
     }
 
     public static boolean isStr2Num(String str) {

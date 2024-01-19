@@ -5,6 +5,7 @@ import com.aliyun.oss.model.ObjectMetadata;
 import com.opentool.system.config.OSSConfiguration;
 import com.opentool.system.service.IOSSService;
 import com.opentool.system.utils.file.OSSFileUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,16 +18,15 @@ import java.util.UUID;
 
 /**
  * OSS服务类
- * / @Author: ZenSheep
- * / @Date: 2023/8/10 16:05
+ * @Author: ZenSheep
+ * @Date: 2023/8/10 16:05
  */
+
+@Slf4j
 @Service
 public class OSSService implements IOSSService {
     @Autowired
     private OSS ossClient;
-
-    @Autowired
-    private OSSConfiguration ossConfiguration;
 
     /**
      * 上传文件到阿里云 OSS 服务器
@@ -55,11 +55,11 @@ public class OSSService implements IOSSService {
             objectMetadata.setContentDisposition("inline;filename=" + URLEncoder.encode(baseName, "UTF-8"));
             fileName = storagePath + "/" + UUID.randomUUID().toString() + "/"  + file.getOriginalFilename();
             // 上传文件：调用ossClient的putObject方法完成文件上传，并返回文件名
-            ossClient.putObject(ossConfiguration.getBucketName(), fileName, inputStream, objectMetadata);
+            ossClient.putObject(OSSConfiguration.getBucketName(), fileName, inputStream, objectMetadata);
             // 设置签名URL过期时间，单位为毫秒。
             Date expiration = new Date(new Date().getTime() + 3600 * 1000);
             // 生成以GET方法访问的签名URL，访客可以直接通过浏览器访问相关内容。
-            url = ossClient.generatePresignedUrl(ossConfiguration.getBucketName(), fileName, expiration).toString();
+            url = ossClient.generatePresignedUrl(OSSConfiguration.getBucketName(), fileName, expiration).toString();
 //            url = ossClient.generatePresignedUrl(ossConfiguration.getBucketName(), fileName, null).toString();
             // 处理返回的url格式
             url = url.substring(0, url.lastIndexOf("?"));

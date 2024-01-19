@@ -80,7 +80,7 @@ public class ScAuthenticationManager implements ReactiveAuthenticationManager {
         authorities.add(new SimpleGrantedAuthority(role));
 
         // 返回securityUserDetails对象后会自定校验用户密码是否正确
-        SecurityUserDetails securityUserDetails = new SecurityUserDetails(username, "{bcrypt}" + passwordEncoder.encode(user.getPassword()), authorities, 1L);
+        SecurityUserDetails securityUserDetails = new SecurityUserDetails(username, "{bcrypt}" + passwordEncoder.encode(user.getPassword()), authorities, user.getUserId());
 
         return Mono.just(new UsernamePasswordAuthenticationToken(securityUserDetails, securityUserDetails.getPassword(), securityUserDetails.getAuthorities()));
     }

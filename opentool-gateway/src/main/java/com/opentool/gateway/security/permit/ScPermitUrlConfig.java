@@ -19,7 +19,10 @@ public class ScPermitUrlConfig {
      * 需要访问的url
      */
     private String[] permitUrl = {
-            "/user/register"
+            "/user/register/**",
+            "/user/check/**",
+            "/user/password/**",
+            "/sms/**"
 //            "/**",
 //            "/actuator/**",
 //            "/api-account/account/**"

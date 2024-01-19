@@ -34,6 +34,10 @@ public class UserInfo {
     private String updateTime;
     private String remark;
 
+    private String repeatPassword;
+    private String codeRequestId;
+    private String inputCode;
+
     // User 转换为 UserInfo
     public static List<UserInfo> userConvertUserInfoList(List<SysUser> sysUsers) {
         List<UserInfo> userInfos = new ArrayList<>();

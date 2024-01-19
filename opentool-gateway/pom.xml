@@ -64,23 +64,6 @@
             <artifactId>fastjson2</artifactId>
         </dependency>
 
-        <!-- SpringBoot Redis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <type>jar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-        </dependency>
-
         <!-- 系统接口 -->
         <dependency>
             <groupId>com.opentool</groupId>

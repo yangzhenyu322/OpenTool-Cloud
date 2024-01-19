@@ -25,11 +25,14 @@
         <mysql-connector.version>8.0.23</mysql-connector.version>
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
         <fastjson2.verson>2.0.34</fastjson2.verson>
-        <aliyun.oss.version>1.0.0</aliyun.oss.version>
         <aliyun.sdk.core.version>4.5.7</aliyun.sdk.core.version>
+        <aliyun.oss.version>1.0.0</aliyun.oss.version>
+        <alibabacloud.dysmsapi20170525.version>2.0.24</alibabacloud.dysmsapi20170525.version>
+        <aliyun.java.sdk.dysmsapi.version>2.0.0</aliyun.java.sdk.dysmsapi.version>
         <thumbnailator.version>0.4.19</thumbnailator.version>
         <chatgpt.java.version>1.1.5</chatgpt.java.version>
         <microsoft.tts.version>1.32.1</microsoft.tts.version>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     </properties>
 
@@ -78,6 +81,13 @@
                 <version>${fastjson2.verson}</version>
             </dependency>
 
+            <!-- aliyun-sdk-core -->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>${aliyun.sdk.core.version}</version>
+            </dependency>
+
             <!-- aliyun-oss -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
@@ -91,11 +101,21 @@
                 </exclusions>
             </dependency>
 
+            <!-- 阿里云短信sdk -->
             <dependency>
                 <groupId>com.aliyun</groupId>
-                <artifactId>aliyun-java-sdk-core</artifactId>
-                <version>${aliyun.sdk.core.version}</version>
+                <artifactId>alibabacloud-dysmsapi20170525</artifactId>
+                <version>${alibabacloud.dysmsapi20170525.version}</version>
             </dependency>
+
+
+
+<!--            &lt;!&ndash;阿里云短信sdk&ndash;&gt;-->
+<!--            <dependency>-->
+<!--                <groupId>com.aliyun</groupId>-->
+<!--                <artifactId>aliyun-java-sdk-dysmsapi</artifactId>-->
+<!--                <version>${aliyun.java.sdk.dysmsapi.version}</version>-->
+<!--            </dependency>-->
 
             <!-- Google图片压缩模块 -->
             <dependency>
@@ -116,6 +136,13 @@
                 <groupId>com.microsoft.cognitiveservices.speech</groupId>
                 <artifactId>client-sdk</artifactId>
                 <version>${microsoft.tts.version}</version>
+            </dependency>
+
+            <!-- Apache Commons Lang -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
             </dependency>
 
             <!-- 核心模块 -->

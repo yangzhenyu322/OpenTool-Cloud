@@ -28,11 +28,29 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
         </dependency>
 
+        <!-- aliyun-sdk-core -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+        </dependency>
+
         <!-- aliyun-oss -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>aliyun-oss-spring-boot-starter</artifactId>
         </dependency>
+
+        <!-- 阿里云短信sdk -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibabacloud-dysmsapi20170525</artifactId>
+        </dependency>
+
+<!--        &lt;!&ndash;阿里云短信sdk&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.aliyun</groupId>-->
+<!--            <artifactId>aliyun-java-sdk-dysmsapi</artifactId>-->
+<!--        </dependency>-->
 
         <!-- junit-test -->
         <dependency>

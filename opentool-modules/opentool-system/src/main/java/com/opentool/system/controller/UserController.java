@@ -82,7 +82,7 @@ public class UserController {
      * @param userInfo
      * @return
      */
-    @PutMapping("/")
+    @PutMapping("/userInfo")
     public R<?> updateUser(@RequestBody UserInfo userInfo) {
         boolean isUpdated = userService.updateById(UserInfo.userInfoParseUser(userInfo));
 
@@ -134,13 +134,42 @@ public class UserController {
     }
 
     /**
+     * 检查手机号码是否被注册过
+     * @param phoneNumber
+     * @return 没有返回OK，有则返回FAIL
+     */
+    @GetMapping("/check/phone/{phoneNumber}")
+    public R<?> checkPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
+        return userService.checkPhoneNumberRegistered(phoneNumber);
+    }
+
+    /**
      * 用户注册
      * @param user
      * @return
      */
-    @PostMapping("/register")
-    public R<?> register(@RequestBody SysUser user) {
-        return userService.registerUser(user);
+    @PostMapping("/register/{codeRequestId}/{inputCode}")
+    public R<?> register(@RequestBody SysUser user,
+                         @PathVariable("codeRequestId") String codeRequestId,
+                         @PathVariable("inputCode") String inputCode) {
+        return userService.registerUser(user, codeRequestId, inputCode);
+    }
+
+    /**
+     * 检测用户名与手机号码是否一致
+     * @param username
+     * @param phoneNumber
+     * @return
+     */
+    @GetMapping("/check/username/{username}/phone/{phoneNumber}")
+    public R<?> checkUsernameAndPhoneConsistent(@PathVariable("username") String username,
+                                                @PathVariable("phoneNumber") String phoneNumber) {
+        return userService.checkUsernameAndPhoneConsistent(username, phoneNumber);
+    }
+
+    @PutMapping("/password")
+    public R<?> updateUserPassword(@RequestBody UserInfo userInfo) {
+        return userService.updateUserPassword(userInfo);
     }
 
     /**
